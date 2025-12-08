@@ -1,13 +1,13 @@
 ---
 layout: cv
-title: Isaac Newtons's CV
+title: Kavin Siaw's CV
 ---
 # Isaac Newton
-Physicist, Mathematician, Cambridge professor.
+Physicist, Astrophysicist.
 
 <div id="webaddress">
-<a href="isaac@applesdofall.org">isaac@applesdofall.org</a>
-| <a href="http://en.wikipedia.org/wiki/Isaac_Newton">My wikipedia page</a>
+<a href="kavin.siaw@astrophysicsist.net">kavin.siaw@astrophysicist.net</a>
+| <a href="https://www.linkedin.com/in/kavinsiaw/">My LinkedIn page</a>
 </div>
 
 
@@ -27,18 +27,16 @@ Cooling, power series, optics, alchemy, planetary motions, apples.
 
 ## Education
 
-`1654-1660`
-__The King's School, Grantham.__
+`September 2021 - now`
+__Brigham Young University-Idaho, United States.__
 
-`June 1661 - now`
-__Trinity College, Cambridge__
+- Bachelor of Science in Physics
 
-- Sizar
+`January 2008 - December 2013`
+__Shen Jai High School, Malaysia__
 
-`1667 - death`
-__Trinity College, Cambridge__
+- High School Deploma in Science
 
-- Fellow
 
 
 
