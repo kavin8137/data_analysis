@@ -1,10 +1,31 @@
 ---
-title: "about me"
-subtitle: "my data science portfolio"
+title: "Kavin Siaw"
+subtitle: "My Data Science Portfolio"
 # use quarto markdown to 
 ---
 
-# Title 1 Header
-## Title 2 Header
+# Competition
+## Project 1
 
-[MarkDown Basics](https://quarto.org/docs/authoring/markdown-basics.html#links-images)
+<iframe 
+  src="https://byuidatascience.github.io/DS250-Course-Draft/Projects/unit2_task1.html"
+  width="100%"
+  height="600px">
+</iframe>
+
+## Project 2
+
+<iframe 
+  src="https://byuidatascience.github.io/DS250-Course-Draft/Projects/unit2_task2.html"
+  width="100%"
+  height="600px">
+</iframe>
+
+## Project 3
+
+<iframe 
+  src="https://byuidatascience.github.io/DS250-Course-Draft/Projects/unit2_task3.html"
+  width="100%"
+  height="600px">
+</iframe>
+

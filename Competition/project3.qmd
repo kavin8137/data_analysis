@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Longevity of Baseball Players"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,159 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+import sqlite3
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+sqlite_file = 'lahmansbaseballdb.sqlite'
+# this file must be in the same location as your .qmd or .py file
+con = sqlite3.connect(sqlite_file)
+```
+
+
+## Question 1
+
+__Write an SQL query that pulls in the the salaries table and the collegeplaying table (and any other tables you might need) and store them in pandas dataframes. Combine the dataframes to create a list of baseball players who attended BYU-Idaho. The new table should contain five columns: playerID, schoolID, salary, and the yearID/teamID associated with each salary. Print out the table in your report.__
+
+_When filtering the player who attended BYU-Idaho, it is easy to see that none of the player join a team for the match. Because they are still attending BYU-Idaho, the data shows that they have no salary available for the momnet. However, these players could potentially joining a team and begin to have income as soon as they graduate from BYU-Idaho._
+
+<!-- The code chunk below can get you going, you may want to write additional code before or after it. -->
+
+```{python}
+# Include and execute your code here
+q1 = """SELECT *
+        FROM salaries
+    """
+salaries = pd.read_sql_query(q1, con)
+
+q2 = """SELECT *
+        FROM collegeplaying
+    """
+college = pd.read_sql_query(q2, con)
+
+q3 = '''SELECT *
+        FROM batting
+     '''
+
+batting = pd.read_sql_query(q3,con)
+
+q4 = '''SELECT *
+        FROM pitching
+     '''
+
+pitching = pd.read_sql_query(q4,con)
+
+# Now complete the rest of the task with python (e.g. pandas) code
+
+df_sal = salaries[['playerID','yearID','teamID','salary']]
+df_col = college[['playerID','yearID','schoolID']]
+
+df = pd.merge(df_sal,df_col,on=['playerID','yearID'],how='outer')
+
+df = df[['playerID','yearID','teamID','schoolID','salary']].query('schoolID == "idbyuid"')
+
+df = df.rename(columns={
+  'playerID': 'Player ID',
+  'yearID': 'Year',
+  'teamID': 'Team ID',
+  'schoolID': 'School ID',
+  'salary': 'Salary'
+})
+
+df
+```
+
+## Question 2
+
+__Pick any two baseball teams and compare them using a metric of your choice (average salary, home runs, number of wins, etc). Be creative! Write an SQL query to read in the tables you need (similar to the tasks above), then use pandas to manipulate the data. Finally, make a graph using Lets-Plot to visualize the comparison. What do you learn?__
+
+_The plot below shows the statistics of average wins across the year has correlation with the number of homeruns. Such analysis is being reflected on the team SNF. However, when analyzing the team NYA, it is surprising that the number of wins for the team decrease since 1940 and it is consistently decreasing even when the number of homeruns increase._
+
+
+```{python}
+from IPython.display import display
+
+df_games = batting[['playerID','yearID','teamID','HR']]
+df_wins = pitching[['playerID','yearID','teamID','W','L']]
+
+df = pd.merge(df_games,df_wins,on=['playerID','yearID','teamID'],how='outer')
+
+df['tHR'] = round(df.groupby(['teamID','yearID'])['HR'].transform('mean'),2)
+
+df['tW'] = round(df.groupby(['teamID','yearID'])['W'].transform('mean'),2)
+
+df['tL'] = round(df.groupby(['teamID','yearID'])['L'].transform('mean'),2)
+
+NYA = df.query("teamID == 'NYA'")
+SFN = df.query("teamID == 'SFN'")
+
+NYA_long = (
+    NYA[['yearID', 'tHR', 'tW']]
+    .rename(columns={'tHR': 'Home Runs', 'tW': 'Wins'})
+    .melt(id_vars='yearID', var_name='Series', value_name='Value')
+)
+
+SFN_long = (
+    SFN[['yearID', 'tHR', 'tW']]
+    .rename(columns={'tHR': 'Home Runs', 'tW': 'Wins'})
+    .melt(id_vars='yearID', var_name='Series', value_name='Value')
+)
+
+p1 = (
+  ggplot(NYA_long, aes(x='yearID', y='Value', color='Series'))
+  + geom_smooth(method='loess', se=False)
+  + labs(x='Year', y='Counts',
+         title='Comparison Between Homeruns and Wins',
+         subtitle='For Team NYA',
+         caption='Source: Sean Lahman', color='Legend')
+  + scale_x_continuous(format='d')
+)
+
+p2 = (
+  ggplot(SFN_long, aes(x='yearID', y='Value', color='Series'))
+  + geom_smooth(method='loess', se=False)
+  + labs(x='Year', y='Counts',
+         title='Comparison Between Homeruns and Wins',
+         subtitle='For Team SFN',
+         caption='Source: Sean Lahman', color='Legend')
+  + scale_x_continuous(format='d')
+)
+
+display(p1,p2)
+
+```
+
+_When comparing two teams together on the number of home run agains the number of wins accross the year, it is easy to see that the increasing of homeruns still have direct correlation with the probabilities of wining the game._
+
+```{python}
+
+NYA = df.query("teamID == 'NYA'").assign(Team='NYA')
+SFN = df.query("teamID == 'SFN'").assign(Team='SFN')
+
+both = pd.concat([NYA, SFN], ignore_index=True)
+
+(
+  ggplot(both, aes(x='tHR', y='tW', color='Team'))
+  + geom_smooth(method='loess', se=False)
+  + labs(
+      x='Home Runs',
+      y='Wins',
+      title='Comparison Between Homeruns and Wins',
+      subtitle='Teams: NYA vs SFN',
+      caption='Source: Sean Lahman',
+      color='Team'
+  )
+)
+
+```

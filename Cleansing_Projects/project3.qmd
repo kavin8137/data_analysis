@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Star Wars for Dummies"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,232 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+from lets_plot import *
+# add the additional libraries you need to import for ML here
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# import your data here using pandas and the URL
+df = pd.read_csv("https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv", encoding_errors = "ignore", skiprows=1)
+
+df.head()
+
+```
+
+<!-- Rather than a simple write up like we have been doing so far, this project requires a more structured approach. You will need to show you have completed the tasks, but will structure the report in a way that is more like a client report. The report will be structured as follows:
+
+ - Executive Summary: This is a high level overview of the analysis, including the problem statement, the data used, and the main findings. It should be concise and to the point, summarizing the key insights/recommendations without going into too much detail. These are usually bullet points, no graphs. PLEASE EXPLICITLY STATE IN THIS SECTION WHERE YOU DID THE STRETCH OR NOT! 
+ - Methods: this is a high level overview of the methods used in the analysis. This should include an explanation of data preparation steps, especially how you dealt with each categorical variable and why. Showing the resulting or original distribution of variables may be helpful. Describe how you handled missing values and outliers. How did/might your decisions impact results?Explain any feature engineering steps you took. This is also where you will put the graphs you recreated to show you validated the dataset and that it matches the article.
+ - Results: this is a more in-depth explanation of results. A classification report and feature importance graphs belong here.
+ - Conclusion: this is where you will discuss the implication of the results, including any limitations of the analysis, and recommendations for actions/future work. It may feel repetitive to the executive summary, but it should be more detailed and include any additional insights you gained from the analysis. -->
+
+## Executive Summary
+
+_In this project, I used the FiveThirtyEight Star Wars survey data to build a machine learning model that predicts whether a respondent’s household income is at least $50,000 per year. After cleaning and transforming the demographic and survey variables, I trained a Random Forest classifier using an 80/20 train–test split. The model’s accuracy on the test set (shown below in the Results section) indicates that survey responses and demographic factors carry meaningful signal for income prediction, though they are not perfectly predictive. I did not complete the optional stretch portion of the assignment._
+
+## Methods
+
+_I began by renaming the original survey columns to more descriptive names and filtered the dataset to respondents who had seen at least one Star Wars movie. Age ranges were converted into numeric midpoints, and a separate indicator was created for missing age values. Education levels were mapped into an approximate “years of schooling” variable, and income ranges were converted into household income midpoints, again with a missing-income indicator. After these feature engineering steps, I created a binary target variable indicating whether household income was at least $50,000. Finally, I one-hot encoded all remaining categorical variables (including character favorability and other survey responses) to produce a fully numeric dataset suitable for modeling._
+
+```{python}
+# Include and execute your code here
+new_col_names = [
+  "respondant_id", "seen_any", "fan_starwars",
+  
+  # Whether seen each movie
+  "seen_epi1","seen_epi2","seen_epi3","seen_epi4","seen_epi5", "seen_epi6",
+
+  # Movie Ranking (1 = best, 6 = worst)
+  "rank_epi1","rank_epi2","rank_epi3","rank_epi4","rank_epi5", "rank_epi6",
+
+  # Character favorability rankings
+  "fav_han", "fav_luke", "fav_leia", "fav_anakin", "fav_obi", "fav_palpatine", "fav_darth", "fav_lando", "fav_boba", "fav_c3po", "fav_r2", "fav_jar", "fav_padme", "fav_yoda",
+
+  # Who Shot first: Han or Greedo?
+  "who_shot_first",
+  # Know about Expanded Universe?
+  "familiar_expanded_universe",
+  # Fan of the Expanded Universe
+  "fan_expanded_universe",
+  # Star Trek fan?
+  "fan_startrek",
+  # Demographic
+  "gender", "age", "income", "educ", "location"
+]
+
+df.columns = new_col_names
+seen_cols = ["seen_epi1","seen_epi2","seen_epi3","seen_epi4","seen_epi5", "seen_epi6"]
+df_seen = df[df[seen_cols].notna().any(axis = 1)]
+# print(df_seen.shape)
+
+# filter data set to respondents who have seen at least one movie
+df_cleaned = df.dropna(subset = seen_cols, how = "all").reset_index(drop = True)
+# df_cleaned.head()
+
+def age_mapping(range):
+  if range == '18-29':
+    return 23.5
+  elif range == '30-44':
+    return 37
+  elif range == '45-60':
+    return 52.5
+  elif range == '>60':
+    return 69
+  else:
+    np.nan
+
+df_cleaned['age_mid'] = df_cleaned['age'].apply(age_mapping).astype('Float64')
+# df_cleaned.head()
+
+# df_cleaned['age_mid'].unique()
+
+df_cleaned['missing_age'] = df_cleaned['age_mid'].isna().astype(int)
+df_cleaned['age_mid'] = df_cleaned['age_mid'].fillna(0)
+
+df_cleaned = df_cleaned.drop(columns = 'age')
+
+df_cleaned['edu_level'] = 0 #default is 0
+
+df_cleaned.loc[df_cleaned['educ'] == 'Less than high school degree', 'edu_level'] = 10
+
+df_cleaned.loc[df_cleaned['educ'] == 'High school degree', 'edu_level'] = 12
+
+df_cleaned.loc[df_cleaned['educ'] == 'Some college or Associate degree', 'edu_level'] = 14
+
+df_cleaned.loc[df_cleaned['educ'] == 'Bachelor degree', 'edu_level'] = 16
+
+df_cleaned.loc[df_cleaned['educ'] == 'Graduate degree', 'edu_level'] = 18
+
+df_cleaned = df_cleaned.drop(columns = 'educ')
+# df_cleaned.head()
+
+def income_mapping(range):
+  if range == '$0 - $24,999':
+    return 12500
+  elif range == '$25,000 - $49,999':
+    return 37500
+  elif range == '$100,000 - $149,999':
+    return 125000
+  elif range == '$50,000 - $99,999':
+    return 75000
+  elif range == '$150,000+':
+    return 150000
+  else:
+    np.nan
+
+df_cleaned['household_income'] = df_cleaned['income'].apply(income_mapping).astype('Float64')
+
+df_cleaned['missing_income'] = df_cleaned['household_income'].isna().astype(int)
+
+df_cleaned['household_income'] = df_cleaned['household_income'].fillna(0)
+
+```
+
+## Results
+
+_After training a Random Forest classifier on the processed dataset, the model achieved an accuracy of 0.647, meaning it correctly predicted whether a respondent earns at least $50,000 about 65% of the time. The feature importance plot shows that demographic variables—particularly education level, age midpoint, and income-related categories—were the strongest predictors, while Star Wars–related responses played a smaller role. The probability distribution plot further illustrates how the model assigns confidence levels, with many predictions clustering near 0 or 1 and a noticeable portion in the uncertain middle range. Overall, the results suggest that demographic information provides meaningful but not decisive predictive power for income classification._
+
+```{python}
+# Include and execute your code here
+df_cleaned['target'] = (df_cleaned['household_income'] >= 50000)*1
+
+favorability_cols = []
+
+for col in df_cleaned.columns:
+  if col.startswith("fav_"):
+    favorability_cols.append(col)
+#print(favorability_cols)
+
+categorical_cols = favorability_cols.copy()
+
+object_columns = df_cleaned.select_dtypes(include = "object").columns
+
+for col in object_columns:
+  if col not in favorability_cols:
+    categorical_cols.append(col)
+#print(categorical_cols)
+
+df_encoded = pd.get_dummies(df_cleaned, columns = categorical_cols, dtype = int)
+
+print('One-hot encode for all remaining categorical columns:')
+df_encoded.head()
+```
+
+```{python}
+target = "target"
+# Prepare the feature (variable) matrix
+X = df_encoded.drop(columns = ["target", "household_income", "income_$50,000 - $99,999", "income_$25,000 - $49,999","income_$100,000 - $149,999", "income_$150,000+", "income_$0 - $24,999"])
+y = df_encoded["target"]
+
+# Train/test split
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42)
+
+# Build/train the model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+
+model.fit(X_train,y_train)
+
+# Run and evaluate the model on the test data
+y_pred = model.predict(X_test)
+print(f'Accuracy: {accuracy_score(y_test,y_pred):.3f}')
+
+feature_importances = model.feature_importances_
+feature_names = list(X.columns)
+
+feat_imp_df = pd.DataFrame({
+  "feature": feature_names,
+  "importance": feature_importances
+}).sort_values("importance", ascending = False)
+
+feat_imp_df_top = feat_imp_df.head(10)
+```
+
+```{python}
+feat_imp_df_top["feature"] = pd.Categorical(
+  feat_imp_df_top["feature"],
+  categories=feat_imp_df_top["feature"],
+  ordered = True
+)
+
+ggplot(feat_imp_df_top, aes(x = "feature", y = "importance"))+\
+  geom_bar(stat = "identity") +\
+  coord_flip() +\
+  labs(
+      x='Feature',
+      y='Importance',
+      title="The Importance for Predicting from Mechine Learning",
+      subtitle='The Prediction from Mechine Learning Based on the Factors',
+      caption='Source: SURVEYMONKEY AUDIENCE'
+  )
+```
+
+```{python}
+y_proba = model.predict_proba(X_test)[:,1]
+
+proba_df = pd.DataFrame({"probability": y_proba})
+
+ggplot(proba_df, aes("probability"))+\
+  geom_histogram(binwidth = 0.05) +\
+  labs(
+      x='Probability',
+      y='Counts',
+      title="The of Predicting the Audience Make At Least $50k Annually",
+      subtitle='The Annual Income From Whether the Audience or the Family',
+      caption='Source: SURVEYMONKEY AUDIENCE'
+  )
+```
+
+## Results
+
+_Overall, the Random Forest model provides a reasonable level of accuracy in predicting whether a respondent’s household income is at least $50,000 based on their demographics and Star Wars survey responses. This suggests that patterns in age, education, income categories, and fan attitudes are related to income level, though they clearly do not explain all of the variation. The analysis is limited by self-reported survey data, broad income ranges, and simple modeling choices (one model and default hyperparameters). Future work could compare different algorithms, tune model parameters, and explore additional evaluation metrics (such as precision and recall) to better understand the trade-offs in predicting higher-income respondents._

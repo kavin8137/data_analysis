@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Show me!"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,126 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+from lets_plot import *
+# add the additional libraries you need to import for ML here
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# import your data here using pandas and the URL
+df = pd.read_csv("https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv")
+
+```
+
+## QUESTION 1
+
+__Create 2-3 charts that evaluate the relationships between each of the top 2 or 3 most important variables (as found in Unit 4 Task 2) and the year the home was built.__ Describe what you learn from the charts about how that variable is related to year built.   
+
+_I have performed the machine learning with the dataset with the model of RandomForest since it is the best model to predict for the dataset thus far. I have also presented the top 10 features that has the greatest correlation to the prediction. The live area has the direct correlation on when the house was built. It is actually make sense as there are not many remodel houses unless it is around the city town. Moreover, I have also plotted the mass plot comparing the features. Surprisingly, the feasures has nearly no correlation to each other when predicting the data since the majority of the data point appear to be aroudn the lowest score on the heatmap. Nevertheless, the number of baths has the correleration to the fact if the house come with a basement, which similar to the stories._
+
+```{python}
+# Include and execute your code here
+X = df.drop(columns=["before1980", "yrbuilt"])
+X = X.select_dtypes(include="number")
+y = df["before1980"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+model = RandomForestClassifier(random_state=42)
+
+model.fit(X_train, y_train)
+pred = model.predict(X_test)
+acc = model.score(X_test, y_test)
+print(f'Accuracy: {acc:.2f}')
+print(classification_report(y_test, pred))
+
+model.feature_importances_
+X_train.columns
+
+df1 = pd.DataFrame({'importance':model.feature_importances_,
+'feature':X_train.columns}).sort_values('importance',ascending=True).tail(10)
+
+p = (
+    ggplot(data=df1)
+    + geom_bar(aes(x='feature', y='importance'), stat='identity')   # swapped x/y
+    + coord_flip()  # keep horizontal look if you still want features on y visually
+    + labs(
+        x='Importance',
+        y='Features',
+        title='Factors that train the model',
+        subtitle='Prediction of whether the house was built\nbefore 1980',
+        caption='Source: Denver Open Data Catalog'
+    )
+)
+p
+
+```
+
+```{python}
+top_feats = df1['feature'].tolist()
+corr = df[top_feats].corr()
+corr_df = (
+    corr.reset_index()
+        .melt(id_vars='index', var_name='feature2', value_name='corr')
+        .rename(columns={'index': 'feature1'})
+)
+p_heatmap = (
+    ggplot(corr_df, aes('feature2', 'feature1', fill='corr'))
+    + geom_tile()
+    + geom_text(aes(label=corr_df['corr'].round(2)), size=10, color='white')
+    + scale_fill_gradient(low='#d6e9f9', high='#08306b')
+    + coord_fixed()  # make cells square
+    + ggsize(700, 500)
+    + labs(
+        title='Feature Correlation Heatmap (Top 10 Variables)',
+        subtitle='Shows how top features relate to each other',
+        x='',
+        y='',
+        caption='Source: Denver Open Data Catalog'
+    )
+)
+p_heatmap
+```
+
+## QUESTION 2
+
+__Create at least one other chart to examine a variable(s) you thought might be important but apparently was not. The chart should show its relationship to the year built.__ Describe what you learn from the chart about how that variable is related to year built. Explain why you think it was not (very) important in the model.
+
+_When looking at the database, I was expecting that the year of the house sold has the greatest correlation for predicting the result as the custom to my country, majority of the house sold within the first two years windows or even before it is being built. However, when I was performing the analysis of how long the house built and being sold, to my surprised that there are houses that being sold after a few decades. We have the highest peak on the year that it was built and sold, then we have the second highest peak around 60 years. It is totally caught me out of guard._
+
+```{python}
+# Include and execute your code here
+df['house_age_at_sale'] = df['syear'] - df['yrbuilt']
+
+p1 = (
+    ggplot(df, aes('house_age_at_sale'))
+    + geom_histogram(bins=40, fill='#4c72b0', color='white', alpha=0.8)
+    + labs(
+        title='Distribution of House Age at Time of Sale',
+        subtitle='Most homes sold decades after being built',
+        x='House Age at Sale (years)',
+        y='Count',
+        caption='Source: Denver Open Data Catalog'
+    )
+)
+p1
+
+```

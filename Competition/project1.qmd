@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - BYU-Idaho Players and Comparing Teams"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,108 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+import sqlite3
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+sqlite_file = 'lahmansbaseballdb.sqlite'
+# this file must be in the same location as your .qmd or .py file
+con = sqlite3.connect(sqlite_file)
+```
+
+## QUESTION 1
+
+__Write an SQL query that provides playerID, yearID, and batting average for players with at least 1 at bat that year. Sort the table from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.__
+
+_The table below shows that the batting average is 100% as it is prioritizing the players with 1 hits when they are at bat that year._
+
+```{python}
+# Include and execute your code here
+sql_title = '''
+    SELECT playerID,
+           yearID as 'Year',
+           H as 'Hits',
+           AB as 'At Bat',
+           round(H*1.0/AB,3) as 'Batting Avg'
+    FROM Batting
+    GROUP BY playerID, yearID
+    HAVING AB >= 1
+    ORDER BY round(H*1.0/AB,3) DESC,
+             playerID ASC
+    LIMIT 5;
+'''
+
+pd.read_sql(sql_title,con)
+
+```
+
+
+## QUESTION 2
+
+__Use the same query as above, but only include players with at least 10 at bats that year. Print the top 5 results.__  
+
+_The table shows the data with more relistic results of batting averages of 60% when the requirement is set for at least 10 at bats that year._
+
+```{python}
+# Include and execute your code here
+
+# sql_title = "SELECT playerID, yearID, AB FROM Batting GROUP BY playerID, yearID HAVING AVG(AB) >= 10 ORDER BY AVG(AB) DESC, playerID ASC LIMIT 5;"
+
+sql_title = '''
+    SELECT playerID,
+           yearID as 'Year',
+           H as 'Hits',
+           AB as 'At Bat',
+           round(H*1.0/AB,3) as 'Batting Avg'
+    FROM Batting
+    GROUP BY playerID, yearID
+    HAVING AB >= 10
+    ORDER BY round(H*1.0/AB,3) DESC,
+             playerID ASC
+    LIMIT 5;
+'''
+
+pd.read_sql(sql_title,con)
+
+```
+
+
+## QUESTION 3
+
+__Now calculate the batting average for players over their entire careers (all years combined). Only include players with at least 100 at bats over their entire career, and print the top 5 results.__
+
+_The batting averages decrease significantly when including the entire career that the player is playing. The batting averages are mostly at 40%._
+
+```{python}
+# Include and execute your code here
+
+# sql_title = "SELECT playerID, yearID, AB FROM Batting GROUP BY playerID HAVING AVG(AB) >= 100 ORDER BY AVG(AB) DESC, playerID ASC LIMIT 5;"
+
+sql_title = '''
+    SELECT playerID,
+           yearID as 'Year',
+           H as 'Hits',
+           AB as 'At Bat',
+           round(H*1.0/AB,3) as 'Batting Avg'
+    FROM Batting
+    GROUP BY playerID
+    HAVING AB >= 100
+    ORDER BY round(H*1.0/AB,3) DESC,
+             playerID ASC
+    LIMIT 5;
+'''
+
+pd.read_sql(sql_title,con)
+
+```

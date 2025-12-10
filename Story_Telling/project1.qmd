@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Exploring Names"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,128 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+df = pd.read_csv("https://github.com/byuidatascience/data4names/raw/master/data-raw/names_year/names_year.csv")
+
+df1 = pd.read_csv("https://github.com/byuidatascience/data4names/raw/master/data-raw/names_prob/names_prob.csv")
+```
+
+## QUESTION 1
+
+__What was the earliest year that the name ‘Felisha’ was used?__
+
+_Based on the chart below, the earliest year that the name 'Feisha' was used in the year of 1964._
+
+```{python}
+# Q1
+
+name_year = df[["name","year","Total"]].query("name == 'Felisha'")
+(
+  ggplot(name_year, aes(x="year", y="Total")) 
+  +geom_point(size=4)
+  + labs(
+        x="Year",
+        y="Number of Babies",
+        title="Number of baby name 'Felisha' in the U.S. across the years",
+        caption="Source: world.data",
+    )
+  + geom_segment(x=1970,y=150,xend=1964,yend=24, arrow=arrow(type="closed"), color="red")
+  + scale_x_continuous(format='d')
+)
+```
+
+
+## QUESTION 2
+
+__What year had the most babies named 'David'? How many babies were named 'David' that year?__
+
+_The year that most babies named 'David' is in the year of 1988. About 244 babies are named 'David' that year._
+
+```{python}
+# Q2
+name_year_number = df[["name","year","Total"]].query("name == 'David'")
+
+(
+  ggplot(name_year, aes(x="year", y="Total")) 
+  + geom_bar(
+        aes(fill=(name_year["year"] == 1988)),
+        stat="identity",
+        show_legend=False
+    )
+  + scale_fill_manual(values={True: "red", False: "skyblue"})
+  + labs(
+        x="Year",
+        y="Number of Babies",
+        title="Number of baby name 'David' in the U.S. across the years",
+        caption="Source: world.data",
+    )
+  + scale_x_continuous(format='d')
+)
+```
+
+
+## QUESTION 3
+
+__What year did your name hit its peak? How many babies were named your name in that year?__
+
+_The name 'Kavin' hit its peak in the year of 2010.. There are 52 babies named 'Kavin' that year. It is a total surprised to me as I am still not seeing anyone share the same name with me._
+
+```{python}
+# Q3
+name_year_number.query("name == 'Kavin'").sort_values('Total',ascending=False).head(3)
+
+name_year = df[["name","year","Total"]].query("name == 'Kavin'")
+(
+  ggplot(name_year, aes(x="year", y="Total")) 
+  +geom_point(size=4)
+  + labs(
+        x="Year",
+        y="Number of Babies",
+        title="Number of baby name 'Kavin' in the U.S. across the years",
+        caption="Source: world.data",
+    )
+  + geom_segment(x=1990,y=100,xend=2010,yend=55, arrow=arrow(type="closed"), color="red")
+  + scale_x_continuous(format='d')
+)
+```
+
+
+
+## QUESTION 4
+
+__How many babies are named ‘Oliver’ in the state of Utah for all years?__  
+
+_Based on the result below, there are 1704 babies are named 'Oliver' in the state of Utah for all years._
+
+```{python}
+# Q4
+name_ut = df[["name","UT"]]
+oliver = name_ut.query("name == 'Oliver'")
+oliver["UT"].sum()
+```
+
+---
+
+## QUESTION 5
+
+__In the most recent year, what was the most common female name in Utah?__ 
+
+_By assuming the names_prob.csv file from the US database collected data in the most recent year, the data shows that the most commont female name in Utah is 'Mary'._
+
+```{python}
+# Q5
+name_sex = df1[["name", "number_female", "UT"]]
+name_sex.sort_values('number_female',ascending=False).head(3)
+```

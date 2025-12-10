@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - If not now, when?"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,122 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+import sqlite3
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+df = pd.read_json("https://github.com/byuidatascience/data4missing/raw/master/data-raw/flights_missing/flights_missing.json")
+```
+
+```{python}
+df2 = df.fillna(np.nan).replace({
+    -999: np.nan,
+    "": np.nan,
+    "n/a": np.nan,
+    "1500+": 1500
+})
+
+df2['airport_name'] = df2.groupby('airport_code')['airport_name'].fillna(method='bfill')
+
+df2['month'] = df2['month'].fillna(method='ffill')
+df2['month'] = df2['month'].replace({'Febuary':'February'})
+df2['year'] = df2['year'].fillna(method='ffill')
+
+# ChatGPT fixed the month issue here
+df2['month_num'] = pd.to_numeric(df2['month'], errors='coerce')
+
+month_map = {
+    'jan':1, 'january':1, 'feb':2, 'february':2, 'mar':3, 'march':3,
+    'apr':4, 'april':4, 'may':5, 'jun':6, 'june':6, 'jul':7, 'july':7,
+    'aug':8, 'august':8, 'sep':9, 'sept':9, 'september':9,
+    'oct':10, 'october':10, 'nov':11, 'november':11, 'dec':12, 'december':12
+}
+# Checking if the table still exist error
+mask = df2['month_num'].isna()
+if mask.any():
+    df2.loc[mask, 'month_num'] = (
+        df2.loc[mask, 'month']
+           .astype(str).str.strip().str.lower()
+           .map(month_map)
+    )
+
+df2['month_num'] = df2['month_num'].astype(float)
+
+for col in ['num_of_delays_weather', 'num_of_delays_late_aircraft', 'num_of_delays_nas']:
+    df2[col] = pd.to_numeric(df2[col], errors='coerce')
+
+df2['num_of_delays_late_aircraft'] = round(df2['num_of_delays_late_aircraft'].fillna(
+    df2['num_of_delays_late_aircraft'].mean()
+),1)
+
+weather_part = df2['num_of_delays_weather']
+late_part = 0.30 * df2['num_of_delays_late_aircraft']
+
+df2['nas_weather_fraction'] = np.where(
+    df2['month_num'].fillna(0).between(4, 8),
+    0.40,  # April–August
+    0.65   # other months
+)
+
+nas_part = df2['nas_weather_fraction'] * df2['num_of_delays_nas']
+
+df2['num_of_delays_weather_total'] = (weather_part + late_part + nas_part).round(2)
+```
+
+## QUESTION 1
+
+__What is the best month to fly if you want to avoid delays of any length?__ Describe the metric you chose and why you chose it to calculate your answer. Include one chart to help support your answer, with the x-axis ordered by month.
+
+_The plot below shows a consistent percentage for the flight delays. The peak time for the flight delay is during the summer. Nevertheless, when analyzing the graph, the lowest chance of having delay flights for all 7 airports will be on September across the year based on the data set. Thus, the best time to take flights will be around September or in the range of mid August till mid November each year._
+
+```{python}
+# Include and execute your code here
+summary = (
+    df2.groupby(['airport_code','month'], as_index=False)
+       .agg(
+           airport_name=('airport_name', 'first'),
+           num_of_delays_total=('num_of_delays_total', 'sum'),
+           num_of_flights_total=('num_of_flights_total', 'sum'),
+           minutes_delayed_total=('minutes_delayed_total','sum')
+       )
+)
+
+summary['delay_chance'] = summary['num_of_delays_total'] / summary['num_of_flights_total'] * 100
+
+summary['month'] = pd.Categorical(
+    summary['month'],
+    categories=[
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ],
+    ordered=True
+)
+
+(
+  ggplot(summary, aes(x='month',y='delay_chance',color='airport_code'))
+  + geom_smooth(method='loess',se=False)
+  + labs(x='Month',
+         y='Delay Change (%)',
+         title='Counts of Delayed Flights for 7 Airports In U.S.',
+         subtitle='Number of delay flights catagorized by month across the years.',
+         caption='Source: BTS Website'
+  )
+  + ylim(0, None)
+  + theme(
+        axis_text_x=element_text(angle=45, hjust=1),
+        plot_title=element_text(size=14, face='bold')
+    )
+)
+
+```

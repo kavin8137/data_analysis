@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Longevity of Baseball Players"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,91 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+import sqlite3
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+sqlite_file = 'lahmansbaseballdb.sqlite'
+# this file must be in the same location as your .qmd or .py file
+con = sqlite3.connect(sqlite_file)
+```
+
+## QUESTION 1
+
+__Write an SQL query that pulls in the batting average table. Then, with Python Pandas code create a dataframe that contains playerID, yearID, and batting average for players with at least 10 at bat that year. Sort the dataframe from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.__
+
+_Based on the table below, the batting averages is around 60% for the top 5 players for that year. The player with the best batting average is about 64.3% in 1974 with 9 hits when the player is at bat._
+
+```{python}
+# Execute an SQL query to pull in the data
+q = """SELECT *
+        FROM batting
+    """
+df_batting = pd.read_sql_query(q, con)
+```
+
+```{python}
+# Now use pandas code to work with the 'df_batting' data frame and complete the task
+
+df = df_batting[['playerID','yearID','AB','H']]
+
+df['Batting Avg'] = round(
+    df.groupby(['playerID', 'yearID'])['H'].transform('sum') /
+    df.groupby(['playerID', 'yearID'])['AB'].transform('sum'),
+    3
+)
+
+df = df.query("AB >= 10").sort_values(['Batting Avg','playerID'],ascending=[False,True]).head(5)
+
+df = df.rename(columns={
+  'yearID': 'Year',
+  'AB': 'At Bats',
+  'H': 'Hits'
+})
+
+df
+
+```
+
+## QUESTION 2
+
+__Now use Python Pandas to calculate the batting average for players over their entire careers (all years combined). Only include players with at least 100 at bats over their entire career, and print the top 5 results.__
+
+_Based on the table below, when calculating the life long career for batting averages, the percentage tend to drop to 35%. The player with the best batting average is about 36.6% with 4189 hits from 11436 at bat._
+
+```{python}
+# Include and execute your pandas code code here. (You already read in the batting table in Question 1)
+
+df = (
+    df_batting
+      .groupby('playerID', as_index=False)
+      .agg(Year=('yearID','max'),AB=('AB','sum'), H=('H','sum'))
+)
+
+df['Batting Avg'] = (df['H'] / df['AB']).round(3)
+
+df = (
+    df.query("AB >= 100")
+      .sort_values(['Batting Avg','playerID'], ascending=[False, True])
+      .head(5)
+)
+
+df = df.rename(columns={
+    'AB': 'At Bats',
+    'H': 'Hits'
+})
+
+df
+
+```

@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Can You Predict That?"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,89 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+from lets_plot import *
+# add the additional libraries you need to import for ML here
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# import your data here using pandas and the URL
+df = pd.read_csv("https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv")
+```
+
+## QUESTION
+
+__Build a classification model labeling houses as being built “before 1980” or “during or after 1980”.__ Your goal is to reach or exceed 90% accuracy. Report your final model choice and any other model parameters you may have tweaked (train-test split ratio, tuning parameters, etc).  
+
+_The machine model is being trained and successful making the prediction if the house is build before 1980 with the precision of 93% as shown in the output below. When looking at the bar chart, we can see the importance of the features of the house make the critical decision for the model to predict the year that the house was built._
+
+```{python}
+# Include and execute your code here
+df = df[df["yrbuilt"].notna()]
+y = df["before1980"]
+
+X = df.drop(columns=["before1980", "yrbuilt"])
+X = X.select_dtypes(include="number")
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.20, random_state=42, stratify=y
+)
+
+my_classifier = RandomForestClassifier()
+my_classifier.fit(X_train, y_train)
+
+pred = my_classifier.predict(X_test)
+
+print(classification_report(y_test, pred))
+
+my_classifier.feature_importances_
+X_train.columns
+
+df = pd.DataFrame({'importance':my_classifier.feature_importances_,
+'feature':X_train.columns}).sort_values('importance')
+
+p = (
+    ggplot(data=df)
+    + geom_bar(aes(x='feature', y='importance'), stat='identity')   # swapped x/y
+    + coord_flip()  # keep horizontal look if you still want features on y visually
+    + labs(
+        x='Importance',
+        y='Features',
+        title='Factors that train the model',
+        subtitle='Prediction of whether the house was built\nbefore 1980',
+        caption='Source: Denver Open Data Catalog'
+    )
+)
+p
+```
+
+```{python}
+accuracy = accuracy_score(y_test, pred)
+precision = precision_score(y_test, pred, average='weighted')
+recall = recall_score(y_test, pred, average='weighted')
+f1 = f1_score(y_test, pred, average='weighted')
+cm = confusion_matrix(y_test, pred)
+
+print(f"Accuracy: {accuracy:.2f}")
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+print(f"F1 Score: {f1:.2f}")
+print("Confusion Matrix:")
+print(cm)
+```

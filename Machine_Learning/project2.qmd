@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - How good is it, really?"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,90 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+from lets_plot import *
+# add the additional libraries you need to import for ML here
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# import your data here using pandas and the URL
+df = pd.read_csv("https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv")
+
+```
+
+## QUESTION 1
+
+__Describe the quality of your classification model using 2-3 different evaluation metrics.__ You also need to explain how to interpret each of the evaluation metrics you use.  
+
+_I picked the K Neighbors and Random Forest model because I am familiar with them when I was doing the last assignment and attended the lecture. I also picking the Logistic Regression becauase I feel that machine learning is doing for linear regression. Based on the result below, the Random Forest Classification has the highest accuracy prediction compared to the true answer. The K Neighbors Classification is not working well as the neighboring data might not be helpful for predicting if the house was built before 1980. For the Logistic Regression, I am not too sure the machenism behind the model even after I have done some research on it. Thus, I am not capable to demonstrate my understanding on this._
+
+```{python}
+# Include and execute your code here
+X = df.drop(columns=["before1980", "yrbuilt"])
+X = X.select_dtypes(include="number")
+y = df["before1980"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+models = {
+    "Logistic Regression": LogisticRegression(max_iter=1000),
+    "Random Forest": RandomForestClassifier(random_state=42),
+    "K Neighbors": KNeighborsClassifier(n_neighbors=11),
+}
+
+for name, model in models.items():
+    model.fit(X_train, y_train)
+    acc = model.score(X_test, y_test)
+    print(f'Model: {name}, Accuracy: {acc:.2f}')
+
+```
+
+
+## QUESTION 2
+
+__Justify your classification model by discussing the most important features selected by your model.__ This discussion should include a feature importance chart and a description of the features.
+
+_I found out the cool feature that I can list out all of the feature that is used to determine of the house was built before 1980. Based on the plot below, it is easy to see that the most importance two factors that determine if the house was built before 1980 are live area and number of bathrooms that they have. Nevertheless, there are a lot more features that involved for making the model to perform a proper prediction to achieve the high accuracy._
+
+```{python}
+# Include and execute your code here
+best = models["Random Forest"]
+
+feat_imp = pd.DataFrame({
+    'feature': X.columns,
+    'importance': best.feature_importances_
+}).sort_values('importance', ascending=False)
+
+p = (
+    ggplot(data=feat_imp)
+    + geom_bar(aes(x='feature', y='importance'), stat='identity', fill='#5DADE2')
+    + coord_flip()
+    + labs(
+        x='Features',
+        y='Importance',
+        title='Factors that train the model',
+        subtitle='Prediction of whether the house was built\nbefore 1980',
+        caption='Source: Denver Open Data Catalog'
+    )
+)
+p
+
+```

@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Star Wars for Dummies"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,176 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+from lets_plot import *
+# add the additional libraries you need to import for ML here
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# import your data here using pandas and the URL
+df = pd.read_csv("https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv", encoding_errors = "ignore", skiprows=1)
+```
+
+<!-- Rather than a simple write up like we have been doing so far, this project requires a more structured approach. You will need to show you have completed the tasks, but will structure the report in a way that is more like a client report. The report will be structured as follows:
+
+ - Executive Summary: This is a high level overview of the analysis, including the problem statement, the data used, and the main findings. It should be concise and to the point, summarizing the key insights/recommendations without going into too much detail. These are usually bullet points, no graphs. PLEASE EXPLICITLY STATE IN THIS SECTION WHERE YOU DID THE STRETCH OR NOT! 
+ - Methods: this is a high level overview of the methods used in the analysis. This should include an explanation of data preparation steps, especially how you dealt with each categorical variable and why. Showing the resulting or original distribution of variables may be helpful. Describe how you handled missing values and outliers. How did/might your decisions impact results?Explain any feature engineering steps you took. This is also where you will put the graphs you recreated to show you validated the dataset and that it matches the article.
+ - Results: this is a more in-depth explanation of results. A classification report and feature importance graphs belong here.
+ - Conclusion: this is where you will discuss the implication of the results, including any limitations of the analysis, and recommendations for actions/future work. It may feel repetitive to the executive summary, but it should be more detailed and include any additional insights you gained from the analysis. -->
+
+## Executive Summary
+
+_This report analyzes the FiveThirtyEight Star Wars survey with the goal of preparing the dataset for future machine learning tasks. The focus of this assignment is on data cleaning, variable transformation, and converting categorical survey responses into usable numerical features. I renamed the original columns for clarity, filtered out respondents who had not seen any Star Wars films, engineered new demographic variables, and applied one-hot encoding to all remaining categorical columns. These steps ensure the dataset is structured consistently and ready for modeling. I did not complete the optional stretch tasks for this assignment._
+
+## Methods
+
+_The data preparation process involved several key cleaning and transformation steps. First, column names were standardized to more meaningful labels, and only respondents who had seen at least one Star Wars movie were kept. Age ranges were converted into numeric midpoints, education levels were mapped to approximate years of schooling, and income categories were translated into estimated household income values, with extra indicators created to track missing information. After addressing these demographic variables, I identified all categorical survey fields—including character favorability and fan-related responses—and prepared them for modeling using one-hot encoding. These combined steps ensured that all variables were numeric, consistent, and suitable for machine learning workflows._
+
+```{python}
+# Include and execute your code here
+new_col_names = [
+  "respondant_id", "seen_any", "fan_starwars",
+  
+  # Whether seen each movie
+  "seen_epi1","seen_epi2","seen_epi3","seen_epi4","seen_epi5", "seen_epi6",
+
+  # Movie Ranking (1 = best, 6 = worst)
+  "rank_epi1","rank_epi2","rank_epi3","rank_epi4","rank_epi5", "rank_epi6",
+
+  # Character favorability rankings
+  "fav_han", "fav_luke", "fav_leia", "fav_anakin", "fav_obi", "fav_palpatine", "fav_darth", "fav_lando", "fav_boba", "fav_c3po", "fav_r2", "fav_jar", "fav_padme", "fav_yoda",
+
+  # Who Shot first: Han or Greedo?
+  "who_shot_first",
+
+  # Know about Expanded Universe?
+  "familiar_expanded_universe",
+
+  # Fan of the Expanded Universe
+  "fan_expanded_universe",
+
+  # Star Trek fan?
+  "fan_startrek",
+
+  # Demographic
+  "gender", "age", "income", "educ", "location"
+]
+
+df.columns = new_col_names
+```
+
+```{python}
+seen_cols = ["seen_epi1","seen_epi2","seen_epi3","seen_epi4","seen_epi5", "seen_epi6"]
+
+df_seen = df[df[seen_cols].notna().any(axis = 1)]
+
+# print(df_seen.shape)
+
+# filter data set to respondents who have seen at least one movie
+df_cleaned = df.dropna(subset = seen_cols, how = "all").reset_index(drop = True)
+df_cleaned.head()
+```
+
+```{python}
+def age_mapping(range):
+  if range == '18-29':
+    return 23.5
+  elif range == '30-44':
+    return 37
+  elif range == '45-60':
+    return 52.5
+  elif range == '>60':
+    return 69
+  else:
+    np.nan
+
+df_cleaned['age_mid'] = df_cleaned['age'].apply(age_mapping).astype('Float64')
+df_cleaned = df_cleaned.drop(columns = 'age')
+# df_cleaned.head()
+```
+
+```{python}
+df_cleaned['edu_level'] = 0 #default is 0
+
+df_cleaned.loc[df_cleaned['educ'] == 'Less than high school degree', 'edu_level'] = 10
+
+df_cleaned.loc[df_cleaned['educ'] == 'High school degree', 'edu_level'] = 12
+
+df_cleaned.loc[df_cleaned['educ'] == 'Some college or Associate degree', 'edu_level'] = 14
+
+df_cleaned.loc[df_cleaned['educ'] == 'Bachelor degree', 'edu_level'] = 16
+
+df_cleaned.loc[df_cleaned['educ'] == 'Graduate degree', 'edu_level'] = 18
+
+df_cleaned = df_cleaned.drop(columns = 'educ')
+# df_cleaned.head()
+```
+
+```{python}
+def income_mapping(range):
+  if range == '$0 - $24,999':
+    return 12500
+  elif range == '$25,000 - $49,999':
+    return 37500
+  elif range == '$100,000 - $149,999':
+    return 125000
+  elif range == '$50,000 - $99,999':
+    return 75000
+  elif range == '$150,000+':
+    return 150000
+  else:
+    np.nan
+
+df_cleaned['household_income'] = df_cleaned['income'].apply(income_mapping).astype('Float64')
+
+df_cleaned['missing_income'] = df_cleaned['household_income'].isna().astype(int)
+
+df_cleaned['household_income'] = df_cleaned['household_income'].fillna(0)
+
+print('Processed Data Frame:')
+display(df_cleaned.head(5))
+```
+
+## Results
+
+_The processed dataset contains a binary income target along with fully encoded demographic, ranking, and character favorability features. One-hot encoding successfully expanded the categorical fields into numeric indicator variables, allowing the structure of the survey responses to be preserved while making the data compatible with machine learning tools. The output tables confirm that the data has been cleaned, transformed, and encoded correctly, with no remaining non-numeric fields in the final dataset. These results demonstrate that the dataset is now ready for predictive modeling in the next stage of the project._
+
+```{python}
+# Include and execute your code here
+df_cleaned['target'] = (df_cleaned['household_income'] >= 50000)*1
+
+favorability_cols = []
+
+for col in df_cleaned.columns:
+  if col.startswith("fav_"):
+    favorability_cols.append(col)
+
+print(f'Favorabiltiy Column: {favorability_cols}')
+
+categorical_cols = favorability_cols.copy()
+
+object_columns = df_cleaned.select_dtypes(include = "object").columns
+
+for col in object_columns:
+  if col not in favorability_cols:
+    categorical_cols.append(col)
+
+print(f'Categorical Column: {categorical_cols}')
+```
+
+```{python}
+df_encoded = pd.get_dummies(df_cleaned, columns = categorical_cols, dtype = int)
+
+print('One-hot encode for all remaining categorical columns:')
+df_encoded.head()
+```
+
+## Results
+
+_In summary, this assignment successfully completed the full data preparation pipeline for the Star Wars survey. The dataset was cleaned, demographic fields were numerically engineered, and all categorical columns were one-hot encoded to create a structured, model-ready feature matrix. These steps provide a strong foundation for the upcoming machine learning analysis, where the cleaned and encoded dataset will be used to train predictive models and evaluate variable importance. While this assignment did not involve running a model, the transformations completed here ensure that the dataset is fully equipped for the modeling tasks that follow._

@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - The war with Star Wars"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,199 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+from lets_plot import *
+# add the additional libraries you need to import for ML here
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# import your data here using pandas and the URL
+df = pd.read_csv("https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv",
+encoding_errors = 'ignore', skiprows = 1)
+
+```
+
+<!-- Rather than a simple write up like we have been doing so far, this project requires a more structured approach. You will need to show you have completed the tasks, but will structure the report in a way that is more like a client report. The report will be structured as follows:
+
+ - Executive Summary: This is a high level overview of the analysis, including the problem statement, the data used, and the main findings. It should be concise and to the point, summarizing the key insights/recommendations without going into too much detail. These are usually bullet points, no graphs. PLEASE EXPLICITLY STATE IN THIS SECTION WHERE YOU DID THE STRETCH OR NOT! 
+ - Methods: this is a high level overview of the methods used in the analysis. This should include an explanation of data preparation steps, especially how you dealt with each categorical variable and why. Showing the resulting or original distribution of variables may be helpful. Describe how you handled missing values and outliers. How did/might your decisions impact results?Explain any feature engineering steps you took. This is also where you will put the graphs you recreated to show you validated the dataset and that it matches the article.
+ - Results: this is a more in-depth explanation of results. A classification report and feature importance graphs belong here.
+ - Conclusion: this is where you will discuss the implication of the results, including any limitations of the analysis, and recommendations for actions/future work. It may feel repetitive to the executive summary, but it should be more detailed and include any additional insights you gained from the analysis. -->
+
+## Executive Summary
+
+_This project examines data from the FiveThirtyEight Star Wars survey to explore which movies respondents have watched, how they rank the episodes, and how they feel about major characters. After cleaning the dataset and recreating key visuals, I built a simple classification model to identify factors related to movie viewing. The results match the trends shown in the original article, with the original trilogy being the most watched and most preferred._
+
+## Methods
+
+_I cleaned the dataset by renaming columns, fixing categorical values, and filtering to include only respondents who had seen at least one Star Wars movie. Missing values were handled by removing incomplete rows only when needed. I then created summary graphs to better understand viewing patterns and movie rankings. Finally, I encoded demographic and fan-related variables to build a simple classification model predicting who had seen the films._
+
+```{python}
+# Include and execute your code here
+
+## Shorten the column names and clean them up for easier use with pandas. Provide a table or list that exemplifies how you fixed the names.
+new_col_names = [
+  "respondant_id", "seen_any", "fan_starwars",
+  #each movie
+  "seen_epi1", "seen_epi2", "seen_epi3", "seen_epi4", "seen_epi5", "seen_epi6",
+  #movie rank (1 = best, 6 = worst)
+  "rank_epi1", "rank_epi2", "rank_epi3", "rank_epi4","rank_epi5", "rank_epi6",
+  #Character (very favorable to very unfavorable)
+  "fav_han", "fav_luke", "fav_leia", "fav_anakin", "fav_obi", "fav_palantine", "fav_darth", "fav_lando", "fav_boba", "fav_c3po", "fav_r2", "fav_jar", "fav_padme", "fav_yoda",
+  #Who shot first
+  "who_shot_first",
+  #Know about expanded universe
+  "familiar_expanded_universe",
+  #Fan of expanded universe
+  "fan_expanded_universe",
+  #Star Treck fan
+  "fan_startrek",
+  #Demogrpahic
+  "gender", "age", "income", "educ", "location"
+]
+df.columns = new_col_names
+
+## Filter the dataset to 835 respondents that have seen at least one film (Hint: Don’t use the column Have you seen any of the 6 films in the Star Wars franchise?)
+seen_col = ["seen_epi1", "seen_epi2", "seen_epi3", "seen_epi4", "seen_epi5", "seen_epi6"]
+df_seen = df[df[seen_col].notna().any(axis = 1)]
+# print(df_seen.shape)
+
+df_seen = df[df[seen_col].any(axis=1)].copy()
+
+# df_seen
+
+```
+
+## Results
+
+_The graphs show that most respondents had seen the original trilogy, with A New Hope, The Empire Strikes Back, and Return of the Jedi receiving the highest viewing percentages. When looking only at people who watched all six films, The Empire Strikes Back was the most frequently ranked as the best movie. These patterns match common fan opinions and highlight the strong preference for the original trilogy. The data also revealed noticeable differences in character favorability and viewing habits across respondents. Overall, the descriptive results helped us understand the main trends in how people watch and rate the Star Wars series._
+
+```{python}
+# Include and execute your code here
+movies = [
+    "The Phantom Menace",
+    "Attack of the Clones",
+    "Revenge of the Sith",
+    "A New Hope",
+    "The Empire Strikes Back",
+    "Return of the Jedi"
+]
+
+# Percent of df_seen who have seen each film
+seen_pct = (df_seen[seen_col].notna().mean() * 100)
+
+df_seen_movies = pd.DataFrame({
+    "movie": movies,
+    "pct": seen_pct.values
+})
+
+# Round for labels like 80, 68, etc.
+df_seen_movies["pct_label"] = df_seen_movies["pct"].round(0).astype(int)
+
+df_seen_movies["movie"] = pd.Categorical(
+    df_seen_movies["movie"],
+    categories=movies,
+    ordered=True
+)
+
+p_seen = (
+    ggplot(df_seen_movies, aes(x="pct", y="movie"))
+    + geom_bar(stat="identity", fill="#1295D8")
+    + geom_text(
+        aes(label="pct_label"),
+        nudge_x=2,
+        size=9
+    )
+    + scale_x_continuous(limits=[0, 100], expand=[0, 0])
+    + scale_y_discrete(limits=movies,reverse=True)
+    + labs(
+        x='',
+        y='',
+        title="Which 'Star Wars' Movies Have You Seen?",
+        subtitle='Of 835 respondents who havec seen any film',
+        caption='Source: SURVEYMONKEY AUDIENCE'
+    )
+    + theme_minimal()
+    + theme(
+        panel_grid_major_y=element_blank(),
+        panel_grid_minor=element_blank(),
+        axis_text_x=element_blank(),
+        axis_ticks=element_blank(),
+        plot_title=element_text(size=18, face="bold"),
+        plot_subtitle=element_text(size=12),
+        axis_text_y=element_text(size=11, color="#555555")
+    )
+)
+
+p_seen
+
+```
+
+```{python}
+# Include and execute your code here
+rank_cols = ["rank_epi1", "rank_epi2", "rank_epi3",
+             "rank_epi4", "rank_epi5", "rank_epi6"]
+
+df_all6 = df[df[seen_col].notna().all(axis=1)].copy()
+# print("n who have seen all 6:", len(df_all6))
+
+ranks_num = df_all6[rank_cols].apply(pd.to_numeric, errors="coerce")
+
+pct_best = ((ranks_num == 1).mean() * 100)
+
+movies_best = [
+    "The Phantom Menace",
+    "Attack of the Clones",
+    "Revenge of the Sith",
+    "A New Hope",
+    "The Empire Strikes Back",
+    "Return of the Jedi"
+]
+
+df_best = pd.DataFrame({
+    "movie": movies_best,
+    "pct": pct_best.values
+})
+df_best["pct_label"] = df_best["pct"].round(0).astype(int)
+
+p_best = (
+    ggplot(df_best, aes(x="pct", y="movie"))
+    + geom_bar(stat="identity", fill="#1295D8")
+    + geom_text(
+        aes(label="pct_label"),
+        nudge_x=1.5,
+        size=9
+    )
+    + scale_x_continuous(limits=[0, df_best["pct"].max() + 10], expand=[0, 0])
+    + scale_y_discrete(limits=movies_best,reverse=True)
+    + labs(
+        x='',
+        y='',
+        title="Which 'Star Wars' Movies Have You Seen?",
+        subtitle='Of 471 respondents who have seen all six films',
+        caption='Source: SURVEYMONKEY AUDIENCE'
+    )
+    + theme_minimal()
+    + theme(
+        panel_grid_major_y=element_blank(),
+        panel_grid_minor=element_blank(),
+        axis_text_x=element_blank(),
+        axis_ticks=element_blank(),
+        plot_title=element_text(size=18, face="bold"),
+        plot_subtitle=element_text(size=12),
+        axis_text_y=element_text(size=11, color="#555555")
+    )
+)
+
+p_best
+```
+
+## Results
+
+_From the visual summaries, I see clear trends in how respondents engage with the Star Wars films. The original trilogy consistently shows the highest viewing percentages, and The Empire Strikes Back stands out as the most commonly ranked “best” movie among those who watched all six episodes. These results reflect strong preferences toward the earlier films and match expectations based on long-standing fan opinions. The descriptive patterns provide a straightforward picture of how respondents experience and evaluate the series._

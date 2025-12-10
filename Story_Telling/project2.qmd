@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - What's in a Name?"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,121 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+
+```{python}
+import pandas as pd
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+df = pd.read_csv("https://github.com/byuidatascience/data4names/raw/master/data-raw/names_year/names_year.csv")
+```
+
+## QUESTION 1
+
+<!-- Make sure at least one of your charts includes reference marks!! -->
+
+__How does your name at your birth year compare to its use historically? Your must provide a chart. The years labels on your charts should not include a comma.__ 
+
+_The plot below depicts the result when 'Kavin' is being used in the U.S. across the years. Based on the trends, the name 'Kavin' is being used more frequently since 1990-1995, especially after 1995. Since 1995, the number of baby name 'Kavin' has increased at least three times the amount at 1995. Before 1995, the number of babies name 'Kavin' maintain around ten._
+
+```{python}
+# Q1
+import textwrap
+
+name_year = df[["name","year","Total"]].query("name == 'Kavin'")
+
+min_year = name_year["year"].min()
+max_year = name_year["year"].max()
+
+breaks = np.arange(min_year, max_year+1, 5, int)
+
+
+text = textwrap.fill("The name 'Kavin' is being used increase since 1990-1995.",28)
+
+text1 = textwrap.fill("The name 'Kavin' tend to be named for 10 babies or less before 1990-1995.",28)
+
+(
+  ggplot(name_year, aes(x="year", y="Total")) 
+  +geom_point(size=4)
+  +geom_point(
+        data=name_year.loc[name_year["year"] == 1995, :], shape=1, size=6, color="red"
+    )
+  + geom_point(
+        data=name_year.loc[name_year["year"] == 1995, :], color="red",size=4
+    )
+  + geom_point(
+        data=name_year.loc[name_year["year"] < 1995], color="blue",size=4
+    )
+  + geom_point(
+        data=name_year.loc[name_year["year"] > 1995], color="green", size=4
+        )
+  + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])
+  + theme(axis_text_x=element_text(angle=0, hjust=0.5))
+  + geom_smooth(method="loess")
+  + labs(
+        x="Year",
+        y="Number of Babies",
+        title="Number of baby name 'Kavin' in the U.S. across the years",
+        subtitle="The graph shows the trend of the name 'Kavin' being used before and after 1995.",
+        caption="Source: world.data",
+    )
+  + geom_label(x=1988, y=35, label=text, hjust="center", color="red")
+  + geom_segment(x=1990,y=18,xend=2010,yend=41, arrow=arrow(type="closed"), color="red")
+  + geom_label(x=1972,y=20,label=text1,hjust="center",color="purple")
+)
+```
+
+
+## QUESTION 2
+
+__If you talked to someone named Brittany on the phone, what is your guess of his or her age? What ages would you not guess? Try to justify your answer with whatever statistics knowledge you have. You must provide a chart. The years labels on your charts should not include a comma.__  
+
+_Based on the chart below, it is easy to see that the babies are being named Brittany is in 1990. this means that when talking to someone named Brittany is 35 years old. However, there is a threshold of 5 years above and 10 years below the peak age. Hence, the most likely age for Brittany can be range from 25 to 40 years old. When talking through the phoen, it is less likely getting a Brittany that is in the age outside the interval of 25 and 40 years old._
+
+```{python}
+# Q2
+name_year = df[["name","year","Total"]].query("name == 'Brittany'")
+
+(
+  ggplot(name_year, aes(x="year", y="Total")) 
+  +geom_point(size=4)
+  + labs(
+        x="Year",
+        y="Number of Babies",
+        title="Number of baby name 'Brittany' in the U.S. across the years",
+        caption="Source: world.data",
+    )
+  + geom_segment(x=1990,y=33500,xend=1990,yend=-50, linetype="dashed", color="red")
+  + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])
+  + theme(axis_text_x=element_text(angle=0, hjust=0.5))
+)
+
+```
+
+_To better understand the chart for analysis, I have also constructed a chart that specifically for age instead of year. Thus the data dicipts obvious result of the peak age for Brittany._
+
+```{python}
+name_year['age'] = (2025 - name_year['year'])
+
+(
+  ggplot(name_year, aes(x="age", y="Total")) 
+  + geom_point(size=4)
+  + labs(
+        x="Age",
+        y="Number of Babies",
+        title="Number of baby name 'Brittany' in the U.S. across the different ages",
+        caption="Source: world.data",
+    )
+  + geom_segment(x=35,y=33500,xend=35,yend=-50, linetype="dashed", color="red")
+  + theme(axis_text_x=element_text(angle=0, hjust=0.5))
+  + scale_x_reverse()
+)
+```

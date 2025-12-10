@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Famous Names"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,143 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd
+import numpy as np
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+df = pd.read_csv("https://github.com/byuidatascience/data4names/raw/master/data-raw/names_year/names_year.csv")
+```
+
+
+
+## QUESTION 1
+
+<!-- Make sure at least one of your charts includes reference marks!! -->
+
+__Mary, Martha, Peter, and Paul are all Christian names. From 1920 - 2000, compare the name usage of each of the four names in a single chart. What trends do you notice? You must provide a chart. The years labels on your charts should not include a comma.__ 
+
+_The graph below depicts the trend for Martha, Mary, Peter, and Paul that is used in the U.S. between 1920 to 2000. It is easy to see that the most common year for the Christian name to be used is between 1940-1960. After that, the usage of these name decrease gradually._
+
+```{python}
+# Q1
+import textwrap
+
+def pick_middle(group):
+    mid_idx = len(group) // 2
+    return group.iloc[mid_idx+3:mid_idx+4]
+
+data = df[["name","year","Total"]].query("name == 'Mary' or name == 'Martha' or name == 'Peter' or name == 'Paul'").query("year >= 1920").query("year <= 2000")
+
+text = textwrap.fill("The peak time for the Christian names mostly used around the year 1952 with the bend width of 10 years.",30)
+
+text1 = textwrap.fill("The usage of Christian name decrease significantly since 1980.", 20)
+
+text2 = textwrap.fill("The usage of Mary dropped signaficantly in 1936.", 15)
+
+min_year = data['year'].min()
+max_year = data['year'].max()
+
+breaks = np.arange(min_year, max_year+1, 5, int)
+
+mapping = {
+    "Mary": "Mary",
+    "Martha": "Martha",
+    "Peter": "Peter",
+    "Paul": "Paul"
+}
+
+data = data.assign(name_label=data["name"].map(mapping))
+
+
+label_info = (
+    data.sort_values("year")
+        .groupby("name", group_keys=False)
+        .apply(pick_middle)
+)
+
+(
+    ggplot(data, aes(x="year", y="Total", color="name"))
+    + geom_point(alpha=0.5)
+    + geom_smooth(aes(linetype="name"), method="loess",se=False)
+    + geom_text(
+        aes(x="year", y="Total", label="name_label"),
+        data=label_info,
+        fontface="bold",
+        size=8,
+        hjust="left",
+        vjust="bottom",
+    )
+    + geom_segment(x=1952,y=58500,xend=1952,yend=-500, linetype="dashed", color="red")
+    + labs(
+        x="Year",
+        y="Number of Babies",
+        title="Number of baby that named by the Christian names across the year",
+        subtitle="The graph depicts the trend of Chirstian name used in the U.S.",
+        caption="Source: world.data",
+    )
+    + geom_label(x=1976, y=50500, label=text, hjust="center", color="orange")
+    + geom_label(x=1989, y=21500, label=text1, hjust="center", color="black")
+    + geom_label(x=1936, y=51500, label=text2, hjust="center", color="blue")
+    + geom_segment(x=1936, y=44750, xend=1936, yend=33500, arrow=arrow(type="closed"), color="blue")
+    + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])
+    + theme(axis_text_x=element_text(angle=0, hjust=0.5))
+    + theme(legend_position="none")
+)
+```
+
+## QUESTION 2
+
+1. __Think of a unique name from a famous movie. Plot the usage of that name and see how changes line up with the movie release. Does it look like the movie had an effect on usage? You must provide a chart. The years labels on your charts should not include a comma.__  
+
+_The investigation of the name 'Isaac' is being used in the U.S. with the correlation with the Swedish Chef show first appear in the U.S. The trend shows that as soon as the show get famous since late 1977, the name 'Isaac' being used increased significantly. This manifest that the community show has great impact to the population when selecting name for the babies._
+
+```{python}
+# Q2
+
+data = df[["name","year","Total"]].query("name == 'Isaac'")
+
+text = textwrap.fill("The first Swedish Chef show appear to the audience in 1975.",20)
+
+text1 = textwrap.fill("The Swedish Chef show get famous since 1977 till present.",15)
+
+text2 = textwrap.fill("More baby name 'Isaac' since the show get famous.",10)
+
+min_year = data['year'].min()
+max_year = data['year'].max()
+
+breaks = np.arange(min_year, max_year+1, 5, int)
+
+(
+    ggplot(data, aes(x="year", y="Total", color="name"))
+    + geom_point(color='darkblue',alpha=0.7)
+    + geom_point(data=data.loc[data["year"] == 1975, :], color="red", size=5)
+    + geom_smooth(method="loess",se=False,color='darkblue')
+    + geom_segment(x=1975,y=12500,xend=1975,yend=0, linetype="dashed", color="red")
+    + labs(
+        x="Year",
+        y="Number of Babies",
+        title="Number of baby that named 'Isaac' across the year",
+        subtitle="The graph depicts the trend of name 'Isaac' used in the U.S.",
+        caption="Source: world.data",
+    )
+    + geom_label(x=1940, y=9000, label=text, hjust="center", color="purple")
+    + geom_label(x=2007, y=1250, label=text1, hjust="center", color="black")
+    + geom_label(x=1987, y=10500, label=text2, hjust="center", color="red")
+    + geom_segment(x=1940, y=7600, xend=1974, yend=5000, arrow=arrow(type="closed"), color="purple")
+    + geom_segment(x=1980, y=4000, xend=2010, yend=12000, arrow=arrow(type="closed"), color="red")
+    + geom_segment(x=1995, y=1430, xend=1979, yend=1150, arrow=arrow(type="closed"), color="black")
+    + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])
+    + theme(axis_text_x=element_text(angle=0, hjust=0.5))
+    + theme(legend_position="none")
+)
+
+```

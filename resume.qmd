@@ -27,7 +27,7 @@ Cooling, power series, optics, alchemy, planetary motions, apples.
 
 ## Education
 
-`September 2021 - now`
+`September 2021 - Now`
 __Brigham Young University-Idaho, United States.__
 
 - Bachelor of Science in Physics
@@ -42,10 +42,8 @@ __Shen Jai High School, Malaysia__
 
 ## Awards
 
-`2012`
-President, *Royal Society*, London, UK
-
-Associate, *French Academy of Science*, Paris, France
+`September 2021 - April 2025`
+Thomas E. Ricks Grant (BYU-I Grant), Rexburg, United States
 
 
 
@@ -55,33 +53,54 @@ Associate, *French Academy of Science*, Paris, France
 
 ### Journals
 
-`1669`
-Newton Sir I, De analysi per æquationes numero terminorum infinitas. 
+`2023`
+Senior Thesis: The Variability Properties of Mrk 501 
 
-`1669`
-Lectiones opticæ.
+`2024`
+Photometric Distance of the RR Lyrae Star Su Draconis
 
-etc. etc. etc.
+`2025`
+ALMA Molecular Line Search of the M87 Nucleus
 
-### Patents
+<!-- ### Patents
 
 `2012`
-Infinitesimal calculus for solutions to physics problems, [SMBC](http://www.techdirt.com/articles/20121011/09312820678/if-patents-had-been-around-time-newton.shtml) patent 001
+Infinitesimal calculus for solutions to physics problems, [SMBC](http://www.techdirt.com/articles/20121011/09312820678/if-patents-had-been-around-time-newton.shtml) patent 001 -->
 
 
 ## Occupation
 
-`1600`
-__Royal Mint__, London
+`September 2025 - Now`
+__Physics Lab Coordinator__, Brigham Young University-Idaho
 
-- Warden
-- Minted coins
+- Guided 300 first- and second-year students in developing effective problem-solving strategies, strengthening understanding of key physics principles
+- Provided targeted mentoring and instructional support for Principles of Physics I–III, reinforcing conceptual mastery and application skills
+- Offered individualized feedback to enhance students’ analytical reasoning and academic performance
 
-`1600`
-__Lucasian professor of Mathematics__, Cambridge University
+`April 2024 - Now`
+__Planetarium Operator__, Brigham Young University-Idaho
+
+- Created and delivered 50 educational planetarium shows for audiences of 30–40 visitors, simplifying complex astronomical concepts into engaging, accessible presentations
+-  Utilized strong communication and storytelling skills to enhance audience understanding and maintain a 95% positive feedback rate from post-show surveys
+- Set up and troubleshot Digistar7 projection systems before each session, ensuring 100% uptime and consistently high-quality visual performance
+
+`April 2022 - Now`
+__Teaching Assistant__, Brigham Young University-Idaho
+
+- Set up and maintained laboratory equipment for Principles of Physics I–III, ensuring all apparatus functioned reliably for student experiments
+-  Guided students through experimental procedures and safety protocols, providing clear instructions and hands-on assistance
+- Evaluated and graded lab reports and assignments, delivering detailed feedback to support learning and improvement
+- Responded to student questions on lab methods and theoretical concepts, reinforcing understanding of core physics principles
+
+`December 2021 - Now`
+__NASA Aeronet Team Lead__, Brigham Young University-Idaho
+
+- Supervised the alignment and operation of the AERONET robotic sun photometer, ensuring precise solar tracking and high-quality atmospheric data collection
+-  Coordinated the transfer of aerosol optical depth data to NASA’s Aerosol Robotic Network (AERONET) for global analysis
+- Led an 8-member team in regularly monitoring sensor performance and verifying data accuracy
+- Diagnosed and addressed maintenance issues, ensuring continuous, reliable system operation and minimal downtime
 
 
+### Footer
 
-<!-- ### Footer
-
-Last updated: May 2013 -->
+Last updated: December 2025

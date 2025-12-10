@@ -1,7 +1,7 @@
 ---
-title: "Client Report - [Insert Project Title]"
+title: "Client Report - Missing Data and JSON"
 subtitle: "Course DS 250"
-author: "[STUDENT NAME]"
+author: "Kavin Siaw"
 format:
   html:
     self-contained: true
@@ -25,4 +25,58 @@ execute:
     
 ---
 
-### Paste in a template
+<!-- ### Paste in a template -->
+```{python}
+import pandas as pd 
+import numpy as np
+
+import sqlite3
+from lets_plot import *
+
+LetsPlot.setup_html(isolated_frame=True)
+```
+
+
+```{python}
+# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html
+
+# Include and execute your code here
+df = pd.read_json("https://github.com/byuidatascience/data4missing/raw/master/data-raw/flights_missing/flights_missing.json")
+```
+
+## QUESTION 1
+
+__Fix all of the varied missing data types in the data to be consistent: use np.nan to represent missing value.__ _In your report include one record example (one row) from your clean data, in the raw JSON format. Your example should display at least one missing value so that we can verify it was done correctly. (Note: JSON will convert NaN's to "null"). Describe your process for finding values that needed to be changed, and how you changed them._ 
+
+_From the clean data, I have replaced the value of -999 with np.nan as well as using the method of fillna for replacing any variable frol NaN or null to NaN, then replacing the empty cell and 'n/a' cell to np.nan. After that, I have replaced '1500+' with 1500. I have fill in the airportname based on the airport code, filling in the month and year using the forward fill. Filling the number of delays aircraft for ALT using the minutes of delay aircraft multiply by 0.04 (the averaged correlation is about 0.04). Lastly, I filled in the minutes of delays nas with 50 (correlation is about 50 between the data set). A line of code is being present below to demonstrate that the missing data has been filled._
+
+```{python}
+# Include and execute your code here
+df = df.fillna(np.nan).replace({-999: np.nan})
+
+df = df.replace({"": np.nan})
+
+df = df.replace({"1500+": 1500})
+
+df = df.replace({"n/a": np.nan})
+
+df['airport_name'] = (
+    df.groupby('airport_code')['airport_name'].fillna(method='bfill')
+)
+
+df['month'] = (df['month']).fillna(method='ffill')
+df['year'] = (df['year']).fillna(method='ffill')
+
+df['num_of_delays_late_aircraft'] = round(df['num_of_delays_late_aircraft'].fillna(df['minutes_delayed_late_aircraft']*0.04))
+
+delays = pd.to_numeric(
+    df['num_of_delays_carrier'].astype(str).str.replace(',', '').str.strip(),
+    errors='coerce'
+)
+
+df['minutes_delayed_carrier'] = df['minutes_delayed_carrier'].fillna(delays*60)
+
+df['minutes_delayed_nas'] = df['minutes_delayed_nas'].fillna(df['num_of_delays_nas']*50)
+
+df.iloc[0:1,].to_json
+```
