@@ -4183,7 +4183,7 @@ vertical-align: -.125em;
   </ul>
 </nav>
 <!-- ### Paste in a template -->
-<div id="d723c5c5" class="cell" data-execution_count="1">
+<div id="be703489" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
@@ -4195,7 +4195,7 @@ vertical-align: -.125em;
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>LetsPlot.setup_html(isolated_frame<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="b9577f2f" class="cell" data-execution_count="2">
+<div id="a4f9531f" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html</span></span>
@@ -4208,7 +4208,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="question-1">QUESTION 1</h2>
 <p><strong>Fix all of the varied missing data types in the data to be consistent: use np.nan to represent missing value.</strong> <em>In your report include one record example (one row) from your clean data, in the raw JSON format. Your example should display at least one missing value so that we can verify it was done correctly. (Note: JSON will convert NaN’s to “null”). Describe your process for finding values that needed to be changed, and how you changed them.</em></p>
 <p><em>From the clean data, I have replaced the value of -999 with np.nan as well as using the method of fillna for replacing any variable frol NaN or null to NaN, then replacing the empty cell and ‘n/a’ cell to np.nan. After that, I have replaced ‘1500+’ with 1500. I have fill in the airportname based on the airport code, filling in the month and year using the forward fill. Filling the number of delays aircraft for ALT using the minutes of delay aircraft multiply by 0.04 (the averaged correlation is about 0.04). Lastly, I filled in the minutes of delays nas with 50 (correlation is about 50 between the data set). A line of code is being present below to demonstrate that the missing data has been filled.</em></p>
-<div id="a68aad8c" class="cell" data-execution_count="3">
+<div id="9bd86785" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Include and execute your code here</span></span>
