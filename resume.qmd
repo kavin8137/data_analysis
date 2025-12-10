@@ -13,16 +13,16 @@ Physicist, Astrophysicist.
 
 ## Currently
 
-Standing on the shoulders of giants
+An undergraduate at Brigham Young University–Idaho, expecting to complete a Bachelor’s degree in April 2026. Actively preparing applications for Physics or Astrophysics PhD programs for Fall 2026.
 
 ### Specialized in
 
-Laws of motion, gravitation, minting coins, disliking [Robert Hooke](http://en.wikipedia.org/wiki/Robert_Hooke)
+Astronomy, astrophysics, supermassive black holes, active galactic nuclei, signal processing, and data science.
 
 
 ### Research interests
 
-Cooling, power series, optics, alchemy, planetary motions, apples.
+Supermassive black holes, active galactic nuclei, accretion and variability processes, time-domain astronomy, optical and multi-wavelength observations, signal processing of irregular and noisy astronomical data, power spectral density analysis, synthetic light-curve generation, and the application of data science and machine learning techniques.
 
 
 ## Education
@@ -37,15 +37,10 @@ __Shen Jai High School, Malaysia__
 
 - High School Deploma in Science
 
-
-
-
 ## Awards
 
 `September 2021 - April 2025`
 Thomas E. Ricks Grant (BYU-I Grant), Rexburg, United States
-
-
 
 ## Publications
 
