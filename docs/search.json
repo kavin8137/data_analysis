@@ -1,85 +1,17 @@
 [
   {
-    "objectID": "story_telling.html",
-    "href": "story_telling.html",
-    "title": "Kavin Siaw",
-    "section": "",
-    "text": "Project 1",
-    "crumbs": [
-      "Story Telling"
-    ]
-  },
-  {
-    "objectID": "story_telling.html#title-2-header",
-    "href": "story_telling.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Story Telling"
-    ]
-  },
-  {
-    "objectID": "ml.html",
-    "href": "ml.html",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Machine Learning"
-    ]
-  },
-  {
-    "objectID": "ml.html#title-2-header",
-    "href": "ml.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Machine Learning"
-    ]
-  },
-  {
     "objectID": "full_stack.html",
     "href": "full_stack.html",
     "title": "about me",
     "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Full Stack"
-    ]
+    "text": "MarkDown Basics"
   },
   {
     "objectID": "full_stack.html#title-2-header",
     "href": "full_stack.html#title-2-header",
     "title": "about me",
     "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Full Stack"
-    ]
-  },
-  {
-    "objectID": "competition.html",
-    "href": "competition.html",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Competitions",
-      "Competition"
-    ]
-  },
-  {
-    "objectID": "competition.html#title-2-header",
-    "href": "competition.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Competitions",
-      "Competition"
-    ]
+    "text": "MarkDown Basics"
   },
   {
     "objectID": "Story_Telling/project3.html",
@@ -87,6 +19,28 @@
     "title": "Client Report - Famous Names",
     "section": "",
     "text": "Show the code\nimport pandas as pd\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pd.read_csv(\"https://github.com/byuidatascience/data4names/raw/master/data-raw/names_year/names_year.csv\")",
+    "crumbs": [
+      "Story Telling",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/project3.html#question-1",
+    "href": "Story_Telling/project3.html#question-1",
+    "title": "Client Report - Famous Names",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\n\nMary, Martha, Peter, and Paul are all Christian names. From 1920 - 2000, compare the name usage of each of the four names in a single chart. What trends do you notice? You must provide a chart. The years labels on your charts should not include a comma.\nThe graph below depicts the trend for Martha, Mary, Peter, and Paul that is used in the U.S. between 1920 to 2000. It is easy to see that the most common year for the Christian name to be used is between 1940-1960. After that, the usage of these name decrease gradually.\n\n\nShow the code\n# Q1\nimport textwrap\n\ndef pick_middle(group):\n    mid_idx = len(group) // 2\n    return group.iloc[mid_idx+3:mid_idx+4]\n\ndata = df[[\"name\",\"year\",\"Total\"]].query(\"name == 'Mary' or name == 'Martha' or name == 'Peter' or name == 'Paul'\").query(\"year &gt;= 1920\").query(\"year &lt;= 2000\")\n\ntext = textwrap.fill(\"The peak time for the Christian names mostly used around the year 1952 with the bend width of 10 years.\",30)\n\ntext1 = textwrap.fill(\"The usage of Christian name decrease significantly since 1980.\", 20)\n\ntext2 = textwrap.fill(\"The usage of Mary dropped signaficantly in 1936.\", 15)\n\nmin_year = data['year'].min()\nmax_year = data['year'].max()\n\nbreaks = np.arange(min_year, max_year+1, 5, int)\n\nmapping = {\n    \"Mary\": \"Mary\",\n    \"Martha\": \"Martha\",\n    \"Peter\": \"Peter\",\n    \"Paul\": \"Paul\"\n}\n\ndata = data.assign(name_label=data[\"name\"].map(mapping))\n\n\nlabel_info = (\n    data.sort_values(\"year\")\n        .groupby(\"name\", group_keys=False)\n        .apply(pick_middle)\n)\n\n(\n    ggplot(data, aes(x=\"year\", y=\"Total\", color=\"name\"))\n    + geom_point(alpha=0.5)\n    + geom_smooth(aes(linetype=\"name\"), method=\"loess\",se=False)\n    + geom_text(\n        aes(x=\"year\", y=\"Total\", label=\"name_label\"),\n        data=label_info,\n        fontface=\"bold\",\n        size=8,\n        hjust=\"left\",\n        vjust=\"bottom\",\n    )\n    + geom_segment(x=1952,y=58500,xend=1952,yend=-500, linetype=\"dashed\", color=\"red\")\n    + labs(\n        x=\"Year\",\n        y=\"Number of Babies\",\n        title=\"Number of baby that named by the Christian names across the year\",\n        subtitle=\"The graph depicts the trend of Chirstian name used in the U.S.\",\n        caption=\"Source: world.data\",\n    )\n    + geom_label(x=1976, y=50500, label=text, hjust=\"center\", color=\"orange\")\n    + geom_label(x=1989, y=21500, label=text1, hjust=\"center\", color=\"black\")\n    + geom_label(x=1936, y=51500, label=text2, hjust=\"center\", color=\"blue\")\n    + geom_segment(x=1936, y=44750, xend=1936, yend=33500, arrow=arrow(type=\"closed\"), color=\"blue\")\n    + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])\n    + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n    + theme(legend_position=\"none\")\n)",
+    "crumbs": [
+      "Story Telling",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/project3.html#question-2",
+    "href": "Story_Telling/project3.html#question-2",
+    "title": "Client Report - Famous Names",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\n\nThink of a unique name from a famous movie. Plot the usage of that name and see how changes line up with the movie release. Does it look like the movie had an effect on usage? You must provide a chart. The years labels on your charts should not include a comma.\n\nThe investigation of the name ‘Isaac’ is being used in the U.S. with the correlation with the Swedish Chef show first appear in the U.S. The trend shows that as soon as the show get famous since late 1977, the name ‘Isaac’ being used increased significantly. This manifest that the community show has great impact to the population when selecting name for the babies.\n\n\nShow the code\n# Q2\n\ndata = df[[\"name\",\"year\",\"Total\"]].query(\"name == 'Isaac'\")\n\ntext = textwrap.fill(\"The first Swedish Chef show appear to the audience in 1975.\",20)\n\ntext1 = textwrap.fill(\"The Swedish Chef show get famous since 1977 till present.\",15)\n\ntext2 = textwrap.fill(\"More baby name 'Isaac' since the show get famous.\",10)\n\nmin_year = data['year'].min()\nmax_year = data['year'].max()\n\nbreaks = np.arange(min_year, max_year+1, 5, int)\n\n(\n    ggplot(data, aes(x=\"year\", y=\"Total\", color=\"name\"))\n    + geom_point(color='darkblue',alpha=0.7)\n    + geom_point(data=data.loc[data[\"year\"] == 1975, :], color=\"red\", size=5)\n    + geom_smooth(method=\"loess\",se=False,color='darkblue')\n    + geom_segment(x=1975,y=12500,xend=1975,yend=0, linetype=\"dashed\", color=\"red\")\n    + labs(\n        x=\"Year\",\n        y=\"Number of Babies\",\n        title=\"Number of baby that named 'Isaac' across the year\",\n        subtitle=\"The graph depicts the trend of name 'Isaac' used in the U.S.\",\n        caption=\"Source: world.data\",\n    )\n    + geom_label(x=1940, y=9000, label=text, hjust=\"center\", color=\"purple\")\n    + geom_label(x=2007, y=1250, label=text1, hjust=\"center\", color=\"black\")\n    + geom_label(x=1987, y=10500, label=text2, hjust=\"center\", color=\"red\")\n    + geom_segment(x=1940, y=7600, xend=1974, yend=5000, arrow=arrow(type=\"closed\"), color=\"purple\")\n    + geom_segment(x=1980, y=4000, xend=2010, yend=12000, arrow=arrow(type=\"closed\"), color=\"red\")\n    + geom_segment(x=1995, y=1430, xend=1979, yend=1150, arrow=arrow(type=\"closed\"), color=\"black\")\n    + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])\n    + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n    + theme(legend_position=\"none\")\n)",
     "crumbs": [
       "Story Telling",
       "Project 3"
@@ -102,267 +56,6 @@
       "Story Telling",
       "Project 1"
     ]
-  },
-  {
-    "objectID": "Machine_Learning/project2.html",
-    "href": "Machine_Learning/project2.html",
-    "title": "Client Report - How good is it, really?",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.datasets import load_wine\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score, confusion_matrix, classification_report\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.metrics import classification_report\nfrom sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv\")",
-    "crumbs": [
-      "Machine Learning",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Full_Stack/project2.html",
-    "href": "Full_Stack/project2.html",
-    "title": "Client Report - [Insert Project Title]",
-    "section": "",
-    "text": "Paste in a template\n\n\n\n\n Back to top",
-    "crumbs": [
-      "Full Stack",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Competition/project3.html",
-    "href": "Competition/project3.html",
-    "title": "Client Report - Longevity of Baseball Players",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nsqlite_file = 'lahmansbaseballdb.sqlite'\n# this file must be in the same location as your .qmd or .py file\ncon = sqlite3.connect(sqlite_file)",
-    "crumbs": [
-      "Competitions",
-      "Project 3"
-    ]
-  },
-  {
-    "objectID": "Competition/project1.html",
-    "href": "Competition/project1.html",
-    "title": "Client Report - BYU-Idaho Players and Comparing Teams",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nsqlite_file = 'lahmansbaseballdb.sqlite'\n# this file must be in the same location as your .qmd or .py file\ncon = sqlite3.connect(sqlite_file)",
-    "crumbs": [
-      "Competitions",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/project2.html",
-    "href": "Cleansing_Projects/project2.html",
-    "title": "Client Report - Star Wars for Dummies",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv\", encoding_errors = \"ignore\", skiprows=1)",
-    "crumbs": [
-      "Data Cleansing",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/project3.html",
-    "href": "Cleansing_Exploration/project3.html",
-    "title": "Client Report - If not now, when?",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pd.read_json(\"https://github.com/byuidatascience/data4missing/raw/master/data-raw/flights_missing/flights_missing.json\")\nShow the code\ndf2 = df.fillna(np.nan).replace({\n    -999: np.nan,\n    \"\": np.nan,\n    \"n/a\": np.nan,\n    \"1500+\": 1500\n})\n\ndf2['airport_name'] = df2.groupby('airport_code')['airport_name'].fillna(method='bfill')\n\ndf2['month'] = df2['month'].fillna(method='ffill')\ndf2['month'] = df2['month'].replace({'Febuary':'February'})\ndf2['year'] = df2['year'].fillna(method='ffill')\n\n# ChatGPT fixed the month issue here\ndf2['month_num'] = pd.to_numeric(df2['month'], errors='coerce')\n\nmonth_map = {\n    'jan':1, 'january':1, 'feb':2, 'february':2, 'mar':3, 'march':3,\n    'apr':4, 'april':4, 'may':5, 'jun':6, 'june':6, 'jul':7, 'july':7,\n    'aug':8, 'august':8, 'sep':9, 'sept':9, 'september':9,\n    'oct':10, 'october':10, 'nov':11, 'november':11, 'dec':12, 'december':12\n}\n# Checking if the table still exist error\nmask = df2['month_num'].isna()\nif mask.any():\n    df2.loc[mask, 'month_num'] = (\n        df2.loc[mask, 'month']\n           .astype(str).str.strip().str.lower()\n           .map(month_map)\n    )\n\ndf2['month_num'] = df2['month_num'].astype(float)\n\nfor col in ['num_of_delays_weather', 'num_of_delays_late_aircraft', 'num_of_delays_nas']:\n    df2[col] = pd.to_numeric(df2[col], errors='coerce')\n\ndf2['num_of_delays_late_aircraft'] = round(df2['num_of_delays_late_aircraft'].fillna(\n    df2['num_of_delays_late_aircraft'].mean()\n),1)\n\nweather_part = df2['num_of_delays_weather']\nlate_part = 0.30 * df2['num_of_delays_late_aircraft']\n\ndf2['nas_weather_fraction'] = np.where(\n    df2['month_num'].fillna(0).between(4, 8),\n    0.40,  # April–August\n    0.65   # other months\n)\n\nnas_part = df2['nas_weather_fraction'] * df2['num_of_delays_nas']\n\ndf2['num_of_delays_weather_total'] = (weather_part + late_part + nas_part).round(2)",
-    "crumbs": [
-      "Data Exploration",
-      "Project 3"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/project1.html",
-    "href": "Cleansing_Exploration/project1.html",
-    "title": "Client Report - Missing Data and JSON",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\n\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pd.read_json(\"https://github.com/byuidatascience/data4missing/raw/master/data-raw/flights_missing/flights_missing.json\")",
-    "crumbs": [
-      "Data Exploration",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/project2.html",
-    "href": "Cleansing_Exploration/project2.html",
-    "title": "Client Report - Weather Delays",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pd.read_json(\"https://github.com/byuidatascience/data4missing/raw/master/data-raw/flights_missing/flights_missing.json\")\nShow the code\n# Include and execute your code here\ndf1 = df.fillna(np.nan).replace({-999: np.nan})\n\ndf1 = df1.replace({\"\": np.nan})\n\ndf1 = df1.replace({\"1500+\": 1500})\n\ndf1 = df1.replace({\"n/a\": np.nan})\n\ndf1['airport_name'] = (\n    df1.groupby('airport_code')['airport_name'].fillna(method='bfill')\n)\n\ndf1['month'] = (df1['month']).fillna(method='ffill')\ndf1['year'] = (df1['year']).fillna(method='ffill')\n\ndf1['num_of_delays_late_aircraft'] = round(df1['num_of_delays_late_aircraft'].fillna(df1['minutes_delayed_late_aircraft']*0.04))\n\ndelays = pd.to_numeric(\n    df1['num_of_delays_carrier'].astype(str).str.replace(',', '').str.strip(),\n    errors='coerce'\n)\n\ndf1['minutes_delayed_carrier'] = df1['minutes_delayed_carrier'].fillna(delays*60)\n\ndf1['minutes_delayed_nas'] = df1['minutes_delayed_nas'].fillna(df1['num_of_delays_nas']*50)",
-    "crumbs": [
-      "Data Exploration",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/project1.html",
-    "href": "Cleansing_Projects/project1.html",
-    "title": "Client Report - The war with Star Wars",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv\",\nencoding_errors = 'ignore', skiprows = 1)",
-    "crumbs": [
-      "Data Cleansing",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/project3.html",
-    "href": "Cleansing_Projects/project3.html",
-    "title": "Client Report - Star Wars for Dummies",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.metrics import accuracy_score\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv\", encoding_errors = \"ignore\", skiprows=1)\n\ndf.head()\n\n\n\n\n\n\n\n\n\nUnnamed: 0\nResponse\nResponse.1\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nStar Wars: Episode IV A New Hope\nStar Wars: Episode V The Empire Strikes Back\nStar Wars: Episode VI Return of the Jedi\nStar Wars: Episode I The Phantom Menace.1\n...\nYoda\nResponse.2\nResponse.3\nResponse.4\nResponse.5\nResponse.6\nResponse.7\nResponse.8\nResponse.9\nResponse.10\n\n\n\n\n0\n3292879998\nYes\nYes\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nStar Wars: Episode IV A New Hope\nStar Wars: Episode V The Empire Strikes Back\nStar Wars: Episode VI Return of the Jedi\n3.0\n...\nVery favorably\nI don't understand this question\nYes\nNo\nNo\nMale\n18-29\nNaN\nHigh school degree\nSouth Atlantic\n\n\n1\n3292879538\nNo\nNaN\nNaN\nNaN\nNaN\nNaN\nNaN\nNaN\nNaN\n...\nNaN\nNaN\nNaN\nNaN\nYes\nMale\n18-29\n$0 - $24,999\nBachelor degree\nWest South Central\n\n\n2\n3292765271\nYes\nNo\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nNaN\nNaN\nNaN\n1.0\n...\nUnfamiliar (N/A)\nI don't understand this question\nNo\nNaN\nNo\nMale\n18-29\n$0 - $24,999\nHigh school degree\nWest North Central\n\n\n3\n3292763116\nYes\nYes\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nStar Wars: Episode IV A New Hope\nStar Wars: Episode V The Empire Strikes Back\nStar Wars: Episode VI Return of the Jedi\n5.0\n...\nVery favorably\nI don't understand this question\nNo\nNaN\nYes\nMale\n18-29\n$100,000 - $149,999\nSome college or Associate degree\nWest North Central\n\n\n4\n3292731220\nYes\nYes\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nStar Wars: Episode IV A New Hope\nStar Wars: Episode V The Empire Strikes Back\nStar Wars: Episode VI Return of the Jedi\n5.0\n...\nSomewhat favorably\nGreedo\nYes\nNo\nNo\nMale\n18-29\n$100,000 - $149,999\nSome college or Associate degree\nWest North Central\n\n\n\n\n5 rows × 38 columns",
-    "crumbs": [
-      "Data Cleansing",
-      "Project 3"
-    ]
-  },
-  {
-    "objectID": "Competition/project2.html",
-    "href": "Competition/project2.html",
-    "title": "Client Report - Longevity of Baseball Players",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nsqlite_file = 'lahmansbaseballdb.sqlite'\n# this file must be in the same location as your .qmd or .py file\ncon = sqlite3.connect(sqlite_file)",
-    "crumbs": [
-      "Competitions",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Full_Stack/project1.html",
-    "href": "Full_Stack/project1.html",
-    "title": "Client Report - [Insert Project Title]",
-    "section": "",
-    "text": "Paste in a template\n\n\n\n\n Back to top",
-    "crumbs": [
-      "Full Stack",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/project1.html",
-    "href": "Machine_Learning/project1.html",
-    "title": "Client Report - Can You Predict That?",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.datasets import load_wine\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score, confusion_matrix, classification_report\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import classification_report\nfrom sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv\")",
-    "crumbs": [
-      "Machine Learning",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/project3.html",
-    "href": "Machine_Learning/project3.html",
-    "title": "Client Report - Show me!",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.datasets import load_wine\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score, confusion_matrix, classification_report\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.metrics import classification_report\nfrom sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv\")",
-    "crumbs": [
-      "Machine Learning",
-      "Project 3"
-    ]
-  },
-  {
-    "objectID": "Story_Telling/project2.html",
-    "href": "Story_Telling/project2.html",
-    "title": "Client Report - What’s in a Name?",
-    "section": "",
-    "text": "Show the code\nimport pandas as pd\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pd.read_csv(\"https://github.com/byuidatascience/data4names/raw/master/data-raw/names_year/names_year.csv\")",
-    "crumbs": [
-      "Story Telling",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "cleansing.html",
-    "href": "cleansing.html",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Data Cleansing"
-    ]
-  },
-  {
-    "objectID": "cleansing.html#title-2-header",
-    "href": "cleansing.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Data Cleansing"
-    ]
-  },
-  {
-    "objectID": "exploration.html",
-    "href": "exploration.html",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Data Exploration"
-    ]
-  },
-  {
-    "objectID": "exploration.html#title-2-header",
-    "href": "exploration.html#title-2-header",
-    "title": "about me",
-    "section": "",
-    "text": "MarkDown Basics",
-    "crumbs": [
-      "Data Exploration"
-    ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Kavin Siaw",
-    "section": "",
-    "text": "I am a Physics major with minors in Mathematics and Computer Programming, specializing in in astronomy, signal processing, and scientific research. I am also interest in data science to find meaningful insights from data and understand their trends.\nI enjoy transforming noisy, complex datasets into clear insights through visualization, modeling, and careful analysis.\n\n\nMy resume has recently been updated with my latest research, technical experience, and leadership roles. Feel free to explore it to learn more about my background and qualifications.\n\n\n\nThis portfolio highlights my projects in data cleansing, exploratory analysis, storytelling, and machine learning, built using Quarto, SQL, and Lets-Plot. Use the menu above to browse each section and view the full projects."
-  },
-  {
-    "objectID": "index.html#title-2-header",
-    "href": "index.html#title-2-header",
-    "title": "Kavin Siaw",
-    "section": "",
-    "text": "MarkDown Basics"
-  },
-  {
-    "objectID": "resume.html",
-    "href": "resume.html",
-    "title": "Kavin Siaw’s CV",
-    "section": "",
-    "text": "Physicist, Astrophysicist.\n\nkavin.siaw@astrophysicist.net | My LinkedIn page\n\n\n\nStanding on the shoulders of giants\n\n\nLaws of motion, gravitation, minting coins, disliking Robert Hooke\n\n\n\nCooling, power series, optics, alchemy, planetary motions, apples.\n\n\n\n\nSeptember 2021 - Now Brigham Young University-Idaho, United States.\n\nBachelor of Science in Physics\n\nJanuary 2008 - December 2013 Shen Jai High School, Malaysia\n\nHigh School Deploma in Science\n\n\n\n\nSeptember 2021 - April 2025 Thomas E. Ricks Grant (BYU-I Grant), Rexburg, United States\n\n\n\n\n\n\n2023 Senior Thesis: The Variability Properties of Mrk 501\n2024 Photometric Distance of the RR Lyrae Star Su Draconis\n2025 ALMA Molecular Line Search of the M87 Nucleus\n\n\n\n\n\nSeptember 2025 - Now Physics Lab Coordinator, Brigham Young University-Idaho\n\nGuided 300 first- and second-year students in developing effective problem-solving strategies, strengthening understanding of key physics principles\nProvided targeted mentoring and instructional support for Principles of Physics I–III, reinforcing conceptual mastery and application skills\nOffered individualized feedback to enhance students’ analytical reasoning and academic performance\n\nApril 2024 - Now Planetarium Operator, Brigham Young University-Idaho\n\nCreated and delivered 50 educational planetarium shows for audiences of 30–40 visitors, simplifying complex astronomical concepts into engaging, accessible presentations\nUtilized strong communication and storytelling skills to enhance audience understanding and maintain a 95% positive feedback rate from post-show surveys\nSet up and troubleshot Digistar7 projection systems before each session, ensuring 100% uptime and consistently high-quality visual performance\n\nApril 2022 - Now Teaching Assistant, Brigham Young University-Idaho\n\nSet up and maintained laboratory equipment for Principles of Physics I–III, ensuring all apparatus functioned reliably for student experiments\nGuided students through experimental procedures and safety protocols, providing clear instructions and hands-on assistance\nEvaluated and graded lab reports and assignments, delivering detailed feedback to support learning and improvement\nResponded to student questions on lab methods and theoretical concepts, reinforcing understanding of core physics principles\n\nDecember 2021 - Now NASA Aeronet Team Lead, Brigham Young University-Idaho\n\nSupervised the alignment and operation of the AERONET robotic sun photometer, ensuring precise solar tracking and high-quality atmospheric data collection\nCoordinated the transfer of aerosol optical depth data to NASA’s Aerosol Robotic Network (AERONET) for global analysis\nLed an 8-member team in regularly monitoring sensor performance and verifying data accuracy\nDiagnosed and addressed maintenance issues, ensuring continuous, reliable system operation and minimal downtime\n\n\n\nLast updated: December 2025"
-  },
-  {
-    "objectID": "resume.html#currently",
-    "href": "resume.html#currently",
-    "title": "Kavin Siaw’s CV",
-    "section": "",
-    "text": "Standing on the shoulders of giants\n\n\nLaws of motion, gravitation, minting coins, disliking Robert Hooke\n\n\n\nCooling, power series, optics, alchemy, planetary motions, apples."
-  },
-  {
-    "objectID": "resume.html#education",
-    "href": "resume.html#education",
-    "title": "Kavin Siaw’s CV",
-    "section": "",
-    "text": "September 2021 - Now Brigham Young University-Idaho, United States.\n\nBachelor of Science in Physics\n\nJanuary 2008 - December 2013 Shen Jai High School, Malaysia\n\nHigh School Deploma in Science"
-  },
-  {
-    "objectID": "resume.html#awards",
-    "href": "resume.html#awards",
-    "title": "Kavin Siaw’s CV",
-    "section": "",
-    "text": "September 2021 - April 2025 Thomas E. Ricks Grant (BYU-I Grant), Rexburg, United States"
-  },
-  {
-    "objectID": "resume.html#publications",
-    "href": "resume.html#publications",
-    "title": "Kavin Siaw’s CV",
-    "section": "",
-    "text": "2023 Senior Thesis: The Variability Properties of Mrk 501\n2024 Photometric Distance of the RR Lyrae Star Su Draconis\n2025 ALMA Molecular Line Search of the M87 Nucleus"
-  },
-  {
-    "objectID": "resume.html#occupation",
-    "href": "resume.html#occupation",
-    "title": "Kavin Siaw’s CV",
-    "section": "",
-    "text": "September 2025 - Now Physics Lab Coordinator, Brigham Young University-Idaho\n\nGuided 300 first- and second-year students in developing effective problem-solving strategies, strengthening understanding of key physics principles\nProvided targeted mentoring and instructional support for Principles of Physics I–III, reinforcing conceptual mastery and application skills\nOffered individualized feedback to enhance students’ analytical reasoning and academic performance\n\nApril 2024 - Now Planetarium Operator, Brigham Young University-Idaho\n\nCreated and delivered 50 educational planetarium shows for audiences of 30–40 visitors, simplifying complex astronomical concepts into engaging, accessible presentations\nUtilized strong communication and storytelling skills to enhance audience understanding and maintain a 95% positive feedback rate from post-show surveys\nSet up and troubleshot Digistar7 projection systems before each session, ensuring 100% uptime and consistently high-quality visual performance\n\nApril 2022 - Now Teaching Assistant, Brigham Young University-Idaho\n\nSet up and maintained laboratory equipment for Principles of Physics I–III, ensuring all apparatus functioned reliably for student experiments\nGuided students through experimental procedures and safety protocols, providing clear instructions and hands-on assistance\nEvaluated and graded lab reports and assignments, delivering detailed feedback to support learning and improvement\nResponded to student questions on lab methods and theoretical concepts, reinforcing understanding of core physics principles\n\nDecember 2021 - Now NASA Aeronet Team Lead, Brigham Young University-Idaho\n\nSupervised the alignment and operation of the AERONET robotic sun photometer, ensuring precise solar tracking and high-quality atmospheric data collection\nCoordinated the transfer of aerosol optical depth data to NASA’s Aerosol Robotic Network (AERONET) for global analysis\nLed an 8-member team in regularly monitoring sensor performance and verifying data accuracy\nDiagnosed and addressed maintenance issues, ensuring continuous, reliable system operation and minimal downtime\n\n\n\nLast updated: December 2025"
   },
   {
     "objectID": "Story_Telling/project1.html#question-1",
@@ -420,47 +113,87 @@
     ]
   },
   {
-    "objectID": "Story_Telling/project2.html#question-1",
-    "href": "Story_Telling/project2.html#question-1",
-    "title": "Client Report - What’s in a Name?",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\n\nHow does your name at your birth year compare to its use historically? Your must provide a chart. The years labels on your charts should not include a comma.\nThe plot below depicts the result when ‘Kavin’ is being used in the U.S. across the years. Based on the trends, the name ‘Kavin’ is being used more frequently since 1990-1995, especially after 1995. Since 1995, the number of baby name ‘Kavin’ has increased at least three times the amount at 1995. Before 1995, the number of babies name ‘Kavin’ maintain around ten.\n\n\nShow the code\n# Q1\nimport textwrap\n\nname_year = df[[\"name\",\"year\",\"Total\"]].query(\"name == 'Kavin'\")\n\nmin_year = name_year[\"year\"].min()\nmax_year = name_year[\"year\"].max()\n\nbreaks = np.arange(min_year, max_year+1, 5, int)\n\n\ntext = textwrap.fill(\"The name 'Kavin' is being used increase since 1990-1995.\",28)\n\ntext1 = textwrap.fill(\"The name 'Kavin' tend to be named for 10 babies or less before 1990-1995.\",28)\n\n(\n  ggplot(name_year, aes(x=\"year\", y=\"Total\")) \n  +geom_point(size=4)\n  +geom_point(\n        data=name_year.loc[name_year[\"year\"] == 1995, :], shape=1, size=6, color=\"red\"\n    )\n  + geom_point(\n        data=name_year.loc[name_year[\"year\"] == 1995, :], color=\"red\",size=4\n    )\n  + geom_point(\n        data=name_year.loc[name_year[\"year\"] &lt; 1995], color=\"blue\",size=4\n    )\n  + geom_point(\n        data=name_year.loc[name_year[\"year\"] &gt; 1995], color=\"green\", size=4\n        )\n  + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])\n  + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n  + geom_smooth(method=\"loess\")\n  + labs(\n        x=\"Year\",\n        y=\"Number of Babies\",\n        title=\"Number of baby name 'Kavin' in the U.S. across the years\",\n        subtitle=\"The graph shows the trend of the name 'Kavin' being used before and after 1995.\",\n        caption=\"Source: world.data\",\n    )\n  + geom_label(x=1988, y=35, label=text, hjust=\"center\", color=\"red\")\n  + geom_segment(x=1990,y=18,xend=2010,yend=41, arrow=arrow(type=\"closed\"), color=\"red\")\n  + geom_label(x=1972,y=20,label=text1,hjust=\"center\",color=\"purple\")\n)",
+    "objectID": "Machine_Learning/project2.html",
+    "href": "Machine_Learning/project2.html",
+    "title": "Client Report - How good is it, really?",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.datasets import load_wine\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score, confusion_matrix, classification_report\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.metrics import classification_report\nfrom sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv\")",
     "crumbs": [
-      "Story Telling",
+      "Machine Learning",
       "Project 2"
     ]
   },
   {
-    "objectID": "Story_Telling/project2.html#question-2",
-    "href": "Story_Telling/project2.html#question-2",
-    "title": "Client Report - What’s in a Name?",
-    "section": "QUESTION 2",
-    "text": "QUESTION 2\nIf you talked to someone named Brittany on the phone, what is your guess of his or her age? What ages would you not guess? Try to justify your answer with whatever statistics knowledge you have. You must provide a chart. The years labels on your charts should not include a comma.\nBased on the chart below, it is easy to see that the babies are being named Brittany is in 1990. this means that when talking to someone named Brittany is 35 years old. However, there is a threshold of 5 years above and 10 years below the peak age. Hence, the most likely age for Brittany can be range from 25 to 40 years old. When talking through the phoen, it is less likely getting a Brittany that is in the age outside the interval of 25 and 40 years old.\n\n\nShow the code\n# Q2\nname_year = df[[\"name\",\"year\",\"Total\"]].query(\"name == 'Brittany'\")\n\n(\n  ggplot(name_year, aes(x=\"year\", y=\"Total\")) \n  +geom_point(size=4)\n  + labs(\n        x=\"Year\",\n        y=\"Number of Babies\",\n        title=\"Number of baby name 'Brittany' in the U.S. across the years\",\n        caption=\"Source: world.data\",\n    )\n  + geom_segment(x=1990,y=33500,xend=1990,yend=-50, linetype=\"dashed\", color=\"red\")\n  + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])\n  + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n)\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\nTo better understand the chart for analysis, I have also constructed a chart that specifically for age instead of year. Thus the data dicipts obvious result of the peak age for Brittany.\n\n\nShow the code\nname_year['age'] = (2025 - name_year['year'])\n\n(\n  ggplot(name_year, aes(x=\"age\", y=\"Total\")) \n  + geom_point(size=4)\n  + labs(\n        x=\"Age\",\n        y=\"Number of Babies\",\n        title=\"Number of baby name 'Brittany' in the U.S. across the different ages\",\n        caption=\"Source: world.data\",\n    )\n  + geom_segment(x=35,y=33500,xend=35,yend=-50, linetype=\"dashed\", color=\"red\")\n  + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n  + scale_x_reverse()\n)",
+    "objectID": "Machine_Learning/project2.html#question-1",
+    "href": "Machine_Learning/project2.html#question-1",
+    "title": "Client Report - How good is it, really?",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nDescribe the quality of your classification model using 2-3 different evaluation metrics. You also need to explain how to interpret each of the evaluation metrics you use.\nI picked the K Neighbors and Random Forest model because I am familiar with them when I was doing the last assignment and attended the lecture. I also picking the Logistic Regression becauase I feel that machine learning is doing for linear regression. Based on the result below, the Random Forest Classification has the highest accuracy prediction compared to the true answer. The K Neighbors Classification is not working well as the neighboring data might not be helpful for predicting if the house was built before 1980. For the Logistic Regression, I am not too sure the machenism behind the model even after I have done some research on it. Thus, I am not capable to demonstrate my understanding on this.\n\n\nShow the code\n# Include and execute your code here\nX = df.drop(columns=[\"before1980\", \"yrbuilt\"])\nX = X.select_dtypes(include=\"number\")\ny = df[\"before1980\"]\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\nmodels = {\n    \"Logistic Regression\": LogisticRegression(max_iter=1000),\n    \"Random Forest\": RandomForestClassifier(random_state=42),\n    \"K Neighbors\": KNeighborsClassifier(n_neighbors=11),\n}\n\nfor name, model in models.items():\n    model.fit(X_train, y_train)\n    acc = model.score(X_test, y_test)\n    print(f'Model: {name}, Accuracy: {acc:.2f}')\n\n\nModel: Logistic Regression, Accuracy: 0.84\nModel: Random Forest, Accuracy: 0.93\nModel: K Neighbors, Accuracy: 0.70",
     "crumbs": [
-      "Story Telling",
+      "Machine Learning",
       "Project 2"
     ]
   },
   {
-    "objectID": "Story_Telling/project3.html#question-1",
-    "href": "Story_Telling/project3.html#question-1",
-    "title": "Client Report - Famous Names",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\n\nMary, Martha, Peter, and Paul are all Christian names. From 1920 - 2000, compare the name usage of each of the four names in a single chart. What trends do you notice? You must provide a chart. The years labels on your charts should not include a comma.\nThe graph below depicts the trend for Martha, Mary, Peter, and Paul that is used in the U.S. between 1920 to 2000. It is easy to see that the most common year for the Christian name to be used is between 1940-1960. After that, the usage of these name decrease gradually.\n\n\nShow the code\n# Q1\nimport textwrap\n\ndef pick_middle(group):\n    mid_idx = len(group) // 2\n    return group.iloc[mid_idx+3:mid_idx+4]\n\ndata = df[[\"name\",\"year\",\"Total\"]].query(\"name == 'Mary' or name == 'Martha' or name == 'Peter' or name == 'Paul'\").query(\"year &gt;= 1920\").query(\"year &lt;= 2000\")\n\ntext = textwrap.fill(\"The peak time for the Christian names mostly used around the year 1952 with the bend width of 10 years.\",30)\n\ntext1 = textwrap.fill(\"The usage of Christian name decrease significantly since 1980.\", 20)\n\ntext2 = textwrap.fill(\"The usage of Mary dropped signaficantly in 1936.\", 15)\n\nmin_year = data['year'].min()\nmax_year = data['year'].max()\n\nbreaks = np.arange(min_year, max_year+1, 5, int)\n\nmapping = {\n    \"Mary\": \"Mary\",\n    \"Martha\": \"Martha\",\n    \"Peter\": \"Peter\",\n    \"Paul\": \"Paul\"\n}\n\ndata = data.assign(name_label=data[\"name\"].map(mapping))\n\n\nlabel_info = (\n    data.sort_values(\"year\")\n        .groupby(\"name\", group_keys=False)\n        .apply(pick_middle)\n)\n\n(\n    ggplot(data, aes(x=\"year\", y=\"Total\", color=\"name\"))\n    + geom_point(alpha=0.5)\n    + geom_smooth(aes(linetype=\"name\"), method=\"loess\",se=False)\n    + geom_text(\n        aes(x=\"year\", y=\"Total\", label=\"name_label\"),\n        data=label_info,\n        fontface=\"bold\",\n        size=8,\n        hjust=\"left\",\n        vjust=\"bottom\",\n    )\n    + geom_segment(x=1952,y=58500,xend=1952,yend=-500, linetype=\"dashed\", color=\"red\")\n    + labs(\n        x=\"Year\",\n        y=\"Number of Babies\",\n        title=\"Number of baby that named by the Christian names across the year\",\n        subtitle=\"The graph depicts the trend of Chirstian name used in the U.S.\",\n        caption=\"Source: world.data\",\n    )\n    + geom_label(x=1976, y=50500, label=text, hjust=\"center\", color=\"orange\")\n    + geom_label(x=1989, y=21500, label=text1, hjust=\"center\", color=\"black\")\n    + geom_label(x=1936, y=51500, label=text2, hjust=\"center\", color=\"blue\")\n    + geom_segment(x=1936, y=44750, xend=1936, yend=33500, arrow=arrow(type=\"closed\"), color=\"blue\")\n    + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])\n    + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n    + theme(legend_position=\"none\")\n)",
+    "objectID": "Machine_Learning/project2.html#question-2",
+    "href": "Machine_Learning/project2.html#question-2",
+    "title": "Client Report - How good is it, really?",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nJustify your classification model by discussing the most important features selected by your model. This discussion should include a feature importance chart and a description of the features.\nI found out the cool feature that I can list out all of the feature that is used to determine of the house was built before 1980. Based on the plot below, it is easy to see that the most importance two factors that determine if the house was built before 1980 are live area and number of bathrooms that they have. Nevertheless, there are a lot more features that involved for making the model to perform a proper prediction to achieve the high accuracy.\n\n\nShow the code\n# Include and execute your code here\nbest = models[\"Random Forest\"]\n\nfeat_imp = pd.DataFrame({\n    'feature': X.columns,\n    'importance': best.feature_importances_\n}).sort_values('importance', ascending=False)\n\np = (\n    ggplot(data=feat_imp)\n    + geom_bar(aes(x='feature', y='importance'), stat='identity', fill='#5DADE2')\n    + coord_flip()\n    + labs(\n        x='Features',\n        y='Importance',\n        title='Factors that train the model',\n        subtitle='Prediction of whether the house was built\\nbefore 1980',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np",
     "crumbs": [
-      "Story Telling",
+      "Machine Learning",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/project2.html",
+    "href": "Full_Stack/project2.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "Competition/project3.html",
+    "href": "Competition/project3.html",
+    "title": "Client Report - Longevity of Baseball Players",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nsqlite_file = 'lahmansbaseballdb.sqlite'\n# this file must be in the same location as your .qmd or .py file\ncon = sqlite3.connect(sqlite_file)",
+    "crumbs": [
+      "Competitions",
       "Project 3"
     ]
   },
   {
-    "objectID": "Story_Telling/project3.html#question-2",
-    "href": "Story_Telling/project3.html#question-2",
-    "title": "Client Report - Famous Names",
-    "section": "QUESTION 2",
-    "text": "QUESTION 2\n\nThink of a unique name from a famous movie. Plot the usage of that name and see how changes line up with the movie release. Does it look like the movie had an effect on usage? You must provide a chart. The years labels on your charts should not include a comma.\n\nThe investigation of the name ‘Isaac’ is being used in the U.S. with the correlation with the Swedish Chef show first appear in the U.S. The trend shows that as soon as the show get famous since late 1977, the name ‘Isaac’ being used increased significantly. This manifest that the community show has great impact to the population when selecting name for the babies.\n\n\nShow the code\n# Q2\n\ndata = df[[\"name\",\"year\",\"Total\"]].query(\"name == 'Isaac'\")\n\ntext = textwrap.fill(\"The first Swedish Chef show appear to the audience in 1975.\",20)\n\ntext1 = textwrap.fill(\"The Swedish Chef show get famous since 1977 till present.\",15)\n\ntext2 = textwrap.fill(\"More baby name 'Isaac' since the show get famous.\",10)\n\nmin_year = data['year'].min()\nmax_year = data['year'].max()\n\nbreaks = np.arange(min_year, max_year+1, 5, int)\n\n(\n    ggplot(data, aes(x=\"year\", y=\"Total\", color=\"name\"))\n    + geom_point(color='darkblue',alpha=0.7)\n    + geom_point(data=data.loc[data[\"year\"] == 1975, :], color=\"red\", size=5)\n    + geom_smooth(method=\"loess\",se=False,color='darkblue')\n    + geom_segment(x=1975,y=12500,xend=1975,yend=0, linetype=\"dashed\", color=\"red\")\n    + labs(\n        x=\"Year\",\n        y=\"Number of Babies\",\n        title=\"Number of baby that named 'Isaac' across the year\",\n        subtitle=\"The graph depicts the trend of name 'Isaac' used in the U.S.\",\n        caption=\"Source: world.data\",\n    )\n    + geom_label(x=1940, y=9000, label=text, hjust=\"center\", color=\"purple\")\n    + geom_label(x=2007, y=1250, label=text1, hjust=\"center\", color=\"black\")\n    + geom_label(x=1987, y=10500, label=text2, hjust=\"center\", color=\"red\")\n    + geom_segment(x=1940, y=7600, xend=1974, yend=5000, arrow=arrow(type=\"closed\"), color=\"purple\")\n    + geom_segment(x=1980, y=4000, xend=2010, yend=12000, arrow=arrow(type=\"closed\"), color=\"red\")\n    + geom_segment(x=1995, y=1430, xend=1979, yend=1150, arrow=arrow(type=\"closed\"), color=\"black\")\n    + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])\n    + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n    + theme(legend_position=\"none\")\n)",
+    "objectID": "Competition/project3.html#question-1",
+    "href": "Competition/project3.html#question-1",
+    "title": "Client Report - Longevity of Baseball Players",
+    "section": "Question 1",
+    "text": "Question 1\nWrite an SQL query that pulls in the the salaries table and the collegeplaying table (and any other tables you might need) and store them in pandas dataframes. Combine the dataframes to create a list of baseball players who attended BYU-Idaho. The new table should contain five columns: playerID, schoolID, salary, and the yearID/teamID associated with each salary. Print out the table in your report.\nWhen filtering the player who attended BYU-Idaho, it is easy to see that none of the player join a team for the match. Because they are still attending BYU-Idaho, the data shows that they have no salary available for the momnet. However, these players could potentially joining a team and begin to have income as soon as they graduate from BYU-Idaho.\n\n\n\nShow the code\n# Include and execute your code here\nq1 = \"\"\"SELECT *\n        FROM salaries\n    \"\"\"\nsalaries = pd.read_sql_query(q1, con)\n\nq2 = \"\"\"SELECT *\n        FROM collegeplaying\n    \"\"\"\ncollege = pd.read_sql_query(q2, con)\n\nq3 = '''SELECT *\n        FROM batting\n     '''\n\nbatting = pd.read_sql_query(q3,con)\n\nq4 = '''SELECT *\n        FROM pitching\n     '''\n\npitching = pd.read_sql_query(q4,con)\n\n# Now complete the rest of the task with python (e.g. pandas) code\n\ndf_sal = salaries[['playerID','yearID','teamID','salary']]\ndf_col = college[['playerID','yearID','schoolID']]\n\ndf = pd.merge(df_sal,df_col,on=['playerID','yearID'],how='outer')\n\ndf = df[['playerID','yearID','teamID','schoolID','salary']].query('schoolID == \"idbyuid\"')\n\ndf = df.rename(columns={\n  'playerID': 'Player ID',\n  'yearID': 'Year',\n  'teamID': 'Team ID',\n  'schoolID': 'School ID',\n  'salary': 'Salary'\n})\n\ndf\n\n\n\n\n\n\n\n\n\nPlayer ID\nYear\nTeam ID\nSchool ID\nSalary\n\n\n\n\n6662\ncatetr01\n2002\nNaN\nidbyuid\nNaN\n\n\n22803\nlindsma01\n2001\nNaN\nidbyuid\nNaN\n\n\n22804\nlindsma01\n2002\nNaN\nidbyuid\nNaN\n\n\n37621\nstephga01\n1991\nNaN\nidbyuid\nNaN\n\n\n37622\nstephga01\n1992\nNaN\nidbyuid\nNaN",
     "crumbs": [
-      "Story Telling",
+      "Competitions",
       "Project 3"
+    ]
+  },
+  {
+    "objectID": "Competition/project3.html#question-2",
+    "href": "Competition/project3.html#question-2",
+    "title": "Client Report - Longevity of Baseball Players",
+    "section": "Question 2",
+    "text": "Question 2\nPick any two baseball teams and compare them using a metric of your choice (average salary, home runs, number of wins, etc). Be creative! Write an SQL query to read in the tables you need (similar to the tasks above), then use pandas to manipulate the data. Finally, make a graph using Lets-Plot to visualize the comparison. What do you learn?\nThe plot below shows the statistics of average wins across the year has correlation with the number of homeruns. Such analysis is being reflected on the team SNF. However, when analyzing the team NYA, it is surprising that the number of wins for the team decrease since 1940 and it is consistently decreasing even when the number of homeruns increase.\n\n\nShow the code\nfrom IPython.display import display\n\ndf_games = batting[['playerID','yearID','teamID','HR']]\ndf_wins = pitching[['playerID','yearID','teamID','W','L']]\n\ndf = pd.merge(df_games,df_wins,on=['playerID','yearID','teamID'],how='outer')\n\ndf['tHR'] = round(df.groupby(['teamID','yearID'])['HR'].transform('mean'),2)\n\ndf['tW'] = round(df.groupby(['teamID','yearID'])['W'].transform('mean'),2)\n\ndf['tL'] = round(df.groupby(['teamID','yearID'])['L'].transform('mean'),2)\n\nNYA = df.query(\"teamID == 'NYA'\")\nSFN = df.query(\"teamID == 'SFN'\")\n\nNYA_long = (\n    NYA[['yearID', 'tHR', 'tW']]\n    .rename(columns={'tHR': 'Home Runs', 'tW': 'Wins'})\n    .melt(id_vars='yearID', var_name='Series', value_name='Value')\n)\n\nSFN_long = (\n    SFN[['yearID', 'tHR', 'tW']]\n    .rename(columns={'tHR': 'Home Runs', 'tW': 'Wins'})\n    .melt(id_vars='yearID', var_name='Series', value_name='Value')\n)\n\np1 = (\n  ggplot(NYA_long, aes(x='yearID', y='Value', color='Series'))\n  + geom_smooth(method='loess', se=False)\n  + labs(x='Year', y='Counts',\n         title='Comparison Between Homeruns and Wins',\n         subtitle='For Team NYA',\n         caption='Source: Sean Lahman', color='Legend')\n  + scale_x_continuous(format='d')\n)\n\np2 = (\n  ggplot(SFN_long, aes(x='yearID', y='Value', color='Series'))\n  + geom_smooth(method='loess', se=False)\n  + labs(x='Year', y='Counts',\n         title='Comparison Between Homeruns and Wins',\n         subtitle='For Team SFN',\n         caption='Source: Sean Lahman', color='Legend')\n  + scale_x_continuous(format='d')\n)\n\ndisplay(p1,p2)\n\n\nINFO [PlotHtmlHelper] : [when HTML generating] LOESS drew a random sample with max_n=1000, seed=37 in [smooth/smooth stat] layer\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\nINFO [PlotHtmlHelper] : [when HTML generating] LOESS drew a random sample with max_n=1000, seed=37 in [smooth/smooth stat] layer\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\nWhen comparing two teams together on the number of home run agains the number of wins accross the year, it is easy to see that the increasing of homeruns still have direct correlation with the probabilities of wining the game.\n\n\nShow the code\nNYA = df.query(\"teamID == 'NYA'\").assign(Team='NYA')\nSFN = df.query(\"teamID == 'SFN'\").assign(Team='SFN')\n\nboth = pd.concat([NYA, SFN], ignore_index=True)\n\n(\n  ggplot(both, aes(x='tHR', y='tW', color='Team'))\n  + geom_smooth(method='loess', se=False)\n  + labs(\n      x='Home Runs',\n      y='Wins',\n      title='Comparison Between Homeruns and Wins',\n      subtitle='Teams: NYA vs SFN',\n      caption='Source: Sean Lahman',\n      color='Team'\n  )\n)\n\n\nINFO [PlotHtmlHelper] : [when HTML generating] LOESS drew a random sample with max_n=1000, seed=37 in [smooth/smooth stat] layer",
+    "crumbs": [
+      "Competitions",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Competition/project1.html",
+    "href": "Competition/project1.html",
+    "title": "Client Report - BYU-Idaho Players and Comparing Teams",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nsqlite_file = 'lahmansbaseballdb.sqlite'\n# this file must be in the same location as your .qmd or .py file\ncon = sqlite3.connect(sqlite_file)",
+    "crumbs": [
+      "Competitions",
+      "Project 1"
     ]
   },
   {
@@ -497,201 +230,14 @@
     ]
   },
   {
-    "objectID": "Competition/project2.html#question-1",
-    "href": "Competition/project2.html#question-1",
-    "title": "Client Report - Longevity of Baseball Players",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\nWrite an SQL query that pulls in the batting average table. Then, with Python Pandas code create a dataframe that contains playerID, yearID, and batting average for players with at least 10 at bat that year. Sort the dataframe from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.\nBased on the table below, the batting averages is around 60% for the top 5 players for that year. The player with the best batting average is about 64.3% in 1974 with 9 hits when the player is at bat.\n\n\nShow the code\n# Execute an SQL query to pull in the data\nq = \"\"\"SELECT *\n        FROM batting\n    \"\"\"\ndf_batting = pd.read_sql_query(q, con)\n\n\n\n\nShow the code\n# Now use pandas code to work with the 'df_batting' data frame and complete the task\n\ndf = df_batting[['playerID','yearID','AB','H']]\n\ndf['Batting Avg'] = round(\n    df.groupby(['playerID', 'yearID'])['H'].transform('sum') /\n    df.groupby(['playerID', 'yearID'])['AB'].transform('sum'),\n    3\n)\n\ndf = df.query(\"AB &gt;= 10\").sort_values(['Batting Avg','playerID'],ascending=[False,True]).head(5)\n\ndf = df.rename(columns={\n  'yearID': 'Year',\n  'AB': 'At Bats',\n  'H': 'Hits'\n})\n\ndf\n\n\n\n\n\n\n\n\n\nplayerID\nYear\nAt Bats\nHits\nBatting Avg\n\n\n\n\n52396\nnymanny01\n1974\n14\n9\n0.643\n\n\n97227\ncarsoma01\n2013\n11\n7\n0.636\n\n\n12096\naltizda01\n1910\n10\n6\n0.600\n\n\n33793\nsilvech01\n1948\n14\n8\n0.571\n\n\n23845\npuccige01\n1930\n16\n9\n0.562",
-    "crumbs": [
-      "Competitions",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Competition/project2.html#question-2",
-    "href": "Competition/project2.html#question-2",
-    "title": "Client Report - Longevity of Baseball Players",
-    "section": "QUESTION 2",
-    "text": "QUESTION 2\nNow use Python Pandas to calculate the batting average for players over their entire careers (all years combined). Only include players with at least 100 at bats over their entire career, and print the top 5 results.\nBased on the table below, when calculating the life long career for batting averages, the percentage tend to drop to 35%. The player with the best batting average is about 36.6% with 4189 hits from 11436 at bat.\n\n\nShow the code\n# Include and execute your pandas code code here. (You already read in the batting table in Question 1)\n\ndf = (\n    df_batting\n      .groupby('playerID', as_index=False)\n      .agg(Year=('yearID','max'),AB=('AB','sum'), H=('H','sum'))\n)\n\ndf['Batting Avg'] = (df['H'] / df['AB']).round(3)\n\ndf = (\n    df.query(\"AB &gt;= 100\")\n      .sort_values(['Batting Avg','playerID'], ascending=[False, True])\n      .head(5)\n)\n\ndf = df.rename(columns={\n    'AB': 'At Bats',\n    'H': 'Hits'\n})\n\ndf\n\n\n\n\n\n\n\n\n\nplayerID\nYear\nAt Bats\nHits\nBatting Avg\n\n\n\n\n3287\ncobbty01\n1928\n11436\n4189\n0.366\n\n\n844\nbarnero01\n1881\n2391\n860\n0.360\n\n\n8213\nhornsro01\n1937\n8173\n2930\n0.358\n\n\n8576\njacksjo01\n1920\n4981\n1772\n0.356\n\n\n11935\nmeyerle01\n1884\n1443\n513\n0.356",
-    "crumbs": [
-      "Competitions",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Competition/project3.html#question-1",
-    "href": "Competition/project3.html#question-1",
-    "title": "Client Report - Longevity of Baseball Players",
-    "section": "Question 1",
-    "text": "Question 1\nWrite an SQL query that pulls in the the salaries table and the collegeplaying table (and any other tables you might need) and store them in pandas dataframes. Combine the dataframes to create a list of baseball players who attended BYU-Idaho. The new table should contain five columns: playerID, schoolID, salary, and the yearID/teamID associated with each salary. Print out the table in your report.\nWhen filtering the player who attended BYU-Idaho, it is easy to see that none of the player join a team for the match. Because they are still attending BYU-Idaho, the data shows that they have no salary available for the momnet. However, these players could potentially joining a team and begin to have income as soon as they graduate from BYU-Idaho.\n\n\n\nShow the code\n# Include and execute your code here\nq1 = \"\"\"SELECT *\n        FROM salaries\n    \"\"\"\nsalaries = pd.read_sql_query(q1, con)\n\nq2 = \"\"\"SELECT *\n        FROM collegeplaying\n    \"\"\"\ncollege = pd.read_sql_query(q2, con)\n\nq3 = '''SELECT *\n        FROM batting\n     '''\n\nbatting = pd.read_sql_query(q3,con)\n\nq4 = '''SELECT *\n        FROM pitching\n     '''\n\npitching = pd.read_sql_query(q4,con)\n\n# Now complete the rest of the task with python (e.g. pandas) code\n\ndf_sal = salaries[['playerID','yearID','teamID','salary']]\ndf_col = college[['playerID','yearID','schoolID']]\n\ndf = pd.merge(df_sal,df_col,on=['playerID','yearID'],how='outer')\n\ndf = df[['playerID','yearID','teamID','schoolID','salary']].query('schoolID == \"idbyuid\"')\n\ndf = df.rename(columns={\n  'playerID': 'Player ID',\n  'yearID': 'Year',\n  'teamID': 'Team ID',\n  'schoolID': 'School ID',\n  'salary': 'Salary'\n})\n\ndf\n\n\n\n\n\n\n\n\n\nPlayer ID\nYear\nTeam ID\nSchool ID\nSalary\n\n\n\n\n6662\ncatetr01\n2002\nNaN\nidbyuid\nNaN\n\n\n22803\nlindsma01\n2001\nNaN\nidbyuid\nNaN\n\n\n22804\nlindsma01\n2002\nNaN\nidbyuid\nNaN\n\n\n37621\nstephga01\n1991\nNaN\nidbyuid\nNaN\n\n\n37622\nstephga01\n1992\nNaN\nidbyuid\nNaN",
-    "crumbs": [
-      "Competitions",
-      "Project 3"
-    ]
-  },
-  {
-    "objectID": "Competition/project3.html#question-2",
-    "href": "Competition/project3.html#question-2",
-    "title": "Client Report - Longevity of Baseball Players",
-    "section": "Question 2",
-    "text": "Question 2\nPick any two baseball teams and compare them using a metric of your choice (average salary, home runs, number of wins, etc). Be creative! Write an SQL query to read in the tables you need (similar to the tasks above), then use pandas to manipulate the data. Finally, make a graph using Lets-Plot to visualize the comparison. What do you learn?\nThe plot below shows the statistics of average wins across the year has correlation with the number of homeruns. Such analysis is being reflected on the team SNF. However, when analyzing the team NYA, it is surprising that the number of wins for the team decrease since 1940 and it is consistently decreasing even when the number of homeruns increase.\n\n\nShow the code\nfrom IPython.display import display\n\ndf_games = batting[['playerID','yearID','teamID','HR']]\ndf_wins = pitching[['playerID','yearID','teamID','W','L']]\n\ndf = pd.merge(df_games,df_wins,on=['playerID','yearID','teamID'],how='outer')\n\ndf['tHR'] = round(df.groupby(['teamID','yearID'])['HR'].transform('mean'),2)\n\ndf['tW'] = round(df.groupby(['teamID','yearID'])['W'].transform('mean'),2)\n\ndf['tL'] = round(df.groupby(['teamID','yearID'])['L'].transform('mean'),2)\n\nNYA = df.query(\"teamID == 'NYA'\")\nSFN = df.query(\"teamID == 'SFN'\")\n\nNYA_long = (\n    NYA[['yearID', 'tHR', 'tW']]\n    .rename(columns={'tHR': 'Home Runs', 'tW': 'Wins'})\n    .melt(id_vars='yearID', var_name='Series', value_name='Value')\n)\n\nSFN_long = (\n    SFN[['yearID', 'tHR', 'tW']]\n    .rename(columns={'tHR': 'Home Runs', 'tW': 'Wins'})\n    .melt(id_vars='yearID', var_name='Series', value_name='Value')\n)\n\np1 = (\n  ggplot(NYA_long, aes(x='yearID', y='Value', color='Series'))\n  + geom_smooth(method='loess', se=False)\n  + labs(x='Year', y='Counts',\n         title='Comparison Between Homeruns and Wins',\n         subtitle='For Team NYA',\n         caption='Source: Sean Lahman', color='Legend')\n  + scale_x_continuous(format='d')\n)\n\np2 = (\n  ggplot(SFN_long, aes(x='yearID', y='Value', color='Series'))\n  + geom_smooth(method='loess', se=False)\n  + labs(x='Year', y='Counts',\n         title='Comparison Between Homeruns and Wins',\n         subtitle='For Team SFN',\n         caption='Source: Sean Lahman', color='Legend')\n  + scale_x_continuous(format='d')\n)\n\ndisplay(p1,p2)\n\n\nINFO [PlotHtmlHelper] : [when HTML generating] LOESS drew a random sample with max_n=1000, seed=37 in [smooth/smooth stat] layer\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\nINFO [PlotHtmlHelper] : [when HTML generating] LOESS drew a random sample with max_n=1000, seed=37 in [smooth/smooth stat] layer\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\nWhen comparing two teams together on the number of home run agains the number of wins accross the year, it is easy to see that the increasing of homeruns still have direct correlation with the probabilities of wining the game.\n\n\nShow the code\nNYA = df.query(\"teamID == 'NYA'\").assign(Team='NYA')\nSFN = df.query(\"teamID == 'SFN'\").assign(Team='SFN')\n\nboth = pd.concat([NYA, SFN], ignore_index=True)\n\n(\n  ggplot(both, aes(x='tHR', y='tW', color='Team'))\n  + geom_smooth(method='loess', se=False)\n  + labs(\n      x='Home Runs',\n      y='Wins',\n      title='Comparison Between Homeruns and Wins',\n      subtitle='Teams: NYA vs SFN',\n      caption='Source: Sean Lahman',\n      color='Team'\n  )\n)\n\n\nINFO [PlotHtmlHelper] : [when HTML generating] LOESS drew a random sample with max_n=1000, seed=37 in [smooth/smooth stat] layer",
-    "crumbs": [
-      "Competitions",
-      "Project 3"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/project1.html#question-1",
-    "href": "Cleansing_Exploration/project1.html#question-1",
-    "title": "Client Report - Missing Data and JSON",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\nFix all of the varied missing data types in the data to be consistent: use np.nan to represent missing value. In your report include one record example (one row) from your clean data, in the raw JSON format. Your example should display at least one missing value so that we can verify it was done correctly. (Note: JSON will convert NaN’s to “null”). Describe your process for finding values that needed to be changed, and how you changed them.\nFrom the clean data, I have replaced the value of -999 with np.nan as well as using the method of fillna for replacing any variable frol NaN or null to NaN, then replacing the empty cell and ‘n/a’ cell to np.nan. After that, I have replaced ‘1500+’ with 1500. I have fill in the airportname based on the airport code, filling in the month and year using the forward fill. Filling the number of delays aircraft for ALT using the minutes of delay aircraft multiply by 0.04 (the averaged correlation is about 0.04). Lastly, I filled in the minutes of delays nas with 50 (correlation is about 50 between the data set). A line of code is being present below to demonstrate that the missing data has been filled.\n\n\nShow the code\n# Include and execute your code here\ndf = df.fillna(np.nan).replace({-999: np.nan})\n\ndf = df.replace({\"\": np.nan})\n\ndf = df.replace({\"1500+\": 1500})\n\ndf = df.replace({\"n/a\": np.nan})\n\ndf['airport_name'] = (\n    df.groupby('airport_code')['airport_name'].fillna(method='bfill')\n)\n\ndf['month'] = (df['month']).fillna(method='ffill')\ndf['year'] = (df['year']).fillna(method='ffill')\n\ndf['num_of_delays_late_aircraft'] = round(df['num_of_delays_late_aircraft'].fillna(df['minutes_delayed_late_aircraft']*0.04))\n\ndelays = pd.to_numeric(\n    df['num_of_delays_carrier'].astype(str).str.replace(',', '').str.strip(),\n    errors='coerce'\n)\n\ndf['minutes_delayed_carrier'] = df['minutes_delayed_carrier'].fillna(delays*60)\n\ndf['minutes_delayed_nas'] = df['minutes_delayed_nas'].fillna(df['num_of_delays_nas']*50)\n\ndf.iloc[0:1,].to_json\n\n\n&lt;bound method NDFrame.to_json of   airport_code                                       airport_name    month  \\\n0          ATL  Atlanta, GA: Hartsfield-Jackson Atlanta Intern...  January   \n\n     year  num_of_flights_total num_of_delays_carrier  \\\n0  2005.0                 35048                  1500   \n\n   num_of_delays_late_aircraft  num_of_delays_nas  num_of_delays_security  \\\n0                       4177.0               4598                      10   \n\n   num_of_delays_weather  num_of_delays_total  minutes_delayed_carrier  \\\n0                    448                 8355                 116423.0   \n\n   minutes_delayed_late_aircraft  minutes_delayed_nas  \\\n0                         104415             207467.0   \n\n   minutes_delayed_security  minutes_delayed_weather  minutes_delayed_total  \n0                       297                    36931                 465533  &gt;",
-    "crumbs": [
-      "Data Exploration",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/project2.html#question-1",
-    "href": "Cleansing_Exploration/project2.html#question-1",
-    "title": "Client Report - Weather Delays",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\n\nWhich airport has the worst delays? Describe the metric you chose, and why you chose it to determine the “worst” airport. Your answer should include a summary table that lists (for each airport) the total number of flights, total number of delayed flights, proportion of delayed flights, and average delay time in hours.\n\nI have combine all the delay flight data across the years and month and calculated the proportional of delayed flights by taking ratio between the total number of delay flights and total number of flights. Then the average dleay time in hours is calculated for the airport. Thus, we only have 7 airports and their total statistic as shown below with sorted value on proportion of delayed flights and average delay time in hours. Based on the table below, it is easy to see that San Francisco has the highest rate of delay flights but with the shorter time of delay in hours. On the other hand, Chicago has the second hightest rate of flights delay with the longest wait time for the delayed flight. Thus, Chicago airport is the designated the “worse” airport.\n\n\nShow the code\n# Include and execute your code here\nsummary = (\n    df1.groupby(['airport_code'], as_index=False)\n      .agg(\n          airport_name=('airport_name', 'first'),\n          num_of_flights_total=('num_of_flights_total', 'sum'),\n          num_of_delays_total=('num_of_delays_total', 'sum'),\n          minutes_delayed_total_mean=('minutes_delayed_total', 'mean')\n      )\n)\n\nsummary['proportional_of_delayed_flights'] = np.where(\n    summary['num_of_flights_total'] &gt; 0,\n    (summary['num_of_delays_total'] / summary['num_of_flights_total']).round(2),\n    np.nan\n)\nsummary['average_delay_time'] = (summary['minutes_delayed_total_mean'] / 60).round(2)\n\noutput = (\n    summary[\n        ['airport_code','airport_name',\n         'num_of_flights_total','num_of_delays_total',\n         'proportional_of_delayed_flights','average_delay_time']\n    ]\n    .sort_values(['proportional_of_delayed_flights','average_delay_time'],\n                 ascending=[False, False])\n)\n\noutput\n\n\n\n\n\n\n\n\n\nairport_code\nairport_name\nnum_of_flights_total\nnum_of_delays_total\nproportional_of_delayed_flights\naverage_delay_time\n\n\n\n\n5\nSFO\nSan Francisco, CA: San Francisco International\n1630945\n425604\n0.26\n3352.33\n\n\n3\nORD\nChicago, IL: Chicago O'Hare International\n3597588\n830825\n0.23\n7115.67\n\n\n0\nATL\nAtlanta, GA: Hartsfield-Jackson Atlanta Intern...\n4430047\n902443\n0.20\n6816.15\n\n\n2\nIAD\nWashington, DC: Washington Dulles International\n851571\n168467\n0.20\n1298.42\n\n\n1\nDEN\nDenver, CO: Denver International\n2513974\n468519\n0.19\n3178.46\n\n\n4\nSAN\nSan Diego, CA: San Diego International\n917862\n175132\n0.19\n1044.98\n\n\n6\nSLC\nSalt Lake City, UT: Salt Lake City International\n1403384\n205160\n0.15\n1278.20",
-    "crumbs": [
-      "Data Exploration",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/project2.html#question-2",
-    "href": "Cleansing_Exploration/project2.html#question-2",
-    "title": "Client Report - Weather Delays",
-    "section": "QUESTION 2",
-    "text": "QUESTION 2\nAccording to the BTS website, the “Weather” category only accounts for severe weather delays. Mild weather delays are not counted in the “Weather” category, but are actually included in both the “NAS” and “Late-Arriving Aircraft” categories. Your job is to create a new column that calculates the total number of flights delayed by weather (both severe and mild). You will need to replace all the missing values in the Late Aircraft variable with the mean. Show your work by printing the first 5 rows of data in a table. Use these three rules for your calculations:\na. 100% of delayed flights in the Weather category are due to weather  \na. 30% of all delayed flights in the Late-Arriving category are due to weather  \na. From April to August, 40% of delayed flights in the NAS category are due to weather. The rest of the months, the proportion rises to 65%  \nI have created a new column for the fligth delays due to weather whether if the weather is severe or mild. I have to create another column of numeric months to complete the calculation. ChatGPT assists on converting the column after reading documentation online.\n\n\nShow the code\n# Include and execute your code here\ndf2 = df.fillna(np.nan).replace({\n    -999: np.nan,\n    \"\": np.nan,\n    \"n/a\": np.nan,\n    \"1500+\": 1500\n})\n\ndf2['airport_name'] = df2.groupby('airport_code')['airport_name'].fillna(method='bfill')\n\ndf2['month'] = df2['month'].fillna(method='ffill')\ndf2['year'] = df2['year'].fillna(method='ffill')\n\n# ChatGPT fixed the month issue here\ndf2['month_num'] = pd.to_numeric(df2['month'], errors='coerce')\n\nmonth_map = {\n    'jan':1, 'january':1, 'feb':2, 'february':2, 'febuary':2, 'mar':3, 'march':3,\n    'apr':4, 'april':4, 'may':5, 'jun':6, 'june':6, 'jul':7, 'july':7,\n    'aug':8, 'august':8, 'sep':9, 'sept':9, 'september':9,\n    'oct':10, 'october':10, 'nov':11, 'november':11, 'dec':12, 'december':12\n}\n# Checking if the table still exist error\nmask = df2['month_num'].isna()\nif mask.any():\n    df2.loc[mask, 'month_num'] = (\n        df2.loc[mask, 'month']\n           .astype(str).str.strip().str.lower()\n           .map(month_map)\n    )\n\ndf2['month_num'] = df2['month_num'].astype(float)\n\nfor col in ['num_of_delays_weather', 'num_of_delays_late_aircraft', 'num_of_delays_nas']:\n    df2[col] = pd.to_numeric(df2[col], errors='coerce')\n\ndf2['num_of_delays_late_aircraft'] = round(df2['num_of_delays_late_aircraft'].fillna(\n    df2['num_of_delays_late_aircraft'].mean()\n),1)\n\nweather_part = df2['num_of_delays_weather']\nlate_part = 0.30 * df2['num_of_delays_late_aircraft']\n\ndf2['nas_weather_fraction'] = np.where(\n    df2['month_num'].fillna(0).between(4, 8),\n    0.40,  # April–August\n    0.65   # other months\n)\n\nnas_part = df2['nas_weather_fraction'] * df2['num_of_delays_nas']\n\ndf2['num_of_delays_weather_total'] = (weather_part + late_part + nas_part).round(2)\n\ndf2[['airport_code','airport_name','month','year',\n      'num_of_delays_weather', 'num_of_delays_late_aircraft',\n      'num_of_delays_nas', 'num_of_delays_weather_total']].head(5)\n\n\n\n\n\n\n\n\n\nairport_code\nairport_name\nmonth\nyear\nnum_of_delays_weather\nnum_of_delays_late_aircraft\nnum_of_delays_nas\nnum_of_delays_weather_total\n\n\n\n\n0\nATL\nAtlanta, GA: Hartsfield-Jackson Atlanta Intern...\nJanuary\n2005.0\n448\n1109.1\n4598\n3769.43\n\n\n1\nDEN\nDenver, CO: Denver International\nJanuary\n2005.0\n233\n928.0\n935\n1119.15\n\n\n2\nIAD\nWashington, DC: Washington Dulles International\nJanuary\n2005.0\n61\n1058.0\n895\n960.15\n\n\n3\nORD\nChicago, IL: Chicago O'Hare International\nJanuary\n2005.0\n306\n2255.0\n5415\n4502.25\n\n\n4\nSAN\nSan Diego, CA: San Diego International\nJanuary\n2005.0\n56\n680.0\n638\n674.70",
-    "crumbs": [
-      "Data Exploration",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/project2.html#question-3",
-    "href": "Cleansing_Exploration/project2.html#question-3",
-    "title": "Client Report - Weather Delays",
-    "section": "Question 3",
-    "text": "Question 3\nUsing the new weather variable calculated above, create a barplot showing the proportion of all flights that are delayed by weather at each airport. Describe what you learn from this graph.\nBased on the barplot below, it is easy to see that both Alanta and Chicago airports outnumbered for the weather delayed flights. It then followed by San Fransico and Denver. Lastly Salt Lake City, Washington D.C., and San Diego airports have the lowest weather flight delay across the years. From the analysis, a potential analysis for Alanta airport is due to the tornado happened frequently due to Alanta is located south close to the ocean. For Chicago airport, it could due to the storm and high speed turbulance coming from the north. Similar to both San Fransico and Denver, the delay could due to tornado or other severe weather that is not accounted in the response here. Meanwhile, both San Fransico and Denver airports are the transfer airport; thus, it is reasonable to have slightly higher rate of delay if there is a servere weather condition on other airports.\n\n\nShow the code\n# Include and execute your code here\nsummary = (\n    df2.groupby(['airport_code'], as_index=False)\n       .agg(\n           airport_name=('airport_name', 'first'),\n           num_of_flights_total=('num_of_flights_total', 'sum'),\n           num_of_delays_weather_total=('num_of_delays_weather_total', 'sum')\n       )\n)\n\nsummary = summary.sort_values('num_of_delays_weather_total', ascending=False)\n\n(\n    ggplot(summary, aes(x='airport_code', y='num_of_delays_weather_total'))\n    + geom_bar(stat='identity', color='black')\n    + labs(\n        x='Airport Code',\n        y='Total Weather-Related Delays',\n        title='Total Number of Flights Delayed by Weather',\n        subtitle='Combined All Years Data for Individual Airport',\n        caption = 'Source: BTS Website'\n    )\n    + theme(\n        axis_text_x=element_text(angle=45, hjust=1),\n        plot_title=element_text(size=14, face='bold')\n    )\n)",
-    "crumbs": [
-      "Data Exploration",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Exploration/project3.html#question-1",
-    "href": "Cleansing_Exploration/project3.html#question-1",
-    "title": "Client Report - If not now, when?",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\nWhat is the best month to fly if you want to avoid delays of any length? Describe the metric you chose and why you chose it to calculate your answer. Include one chart to help support your answer, with the x-axis ordered by month.\nThe plot below shows a consistent percentage for the flight delays. The peak time for the flight delay is during the summer. Nevertheless, when analyzing the graph, the lowest chance of having delay flights for all 7 airports will be on September across the year based on the data set. Thus, the best time to take flights will be around September or in the range of mid August till mid November each year.\n\n\nShow the code\n# Include and execute your code here\nsummary = (\n    df2.groupby(['airport_code','month'], as_index=False)\n       .agg(\n           airport_name=('airport_name', 'first'),\n           num_of_delays_total=('num_of_delays_total', 'sum'),\n           num_of_flights_total=('num_of_flights_total', 'sum'),\n           minutes_delayed_total=('minutes_delayed_total','sum')\n       )\n)\n\nsummary['delay_chance'] = summary['num_of_delays_total'] / summary['num_of_flights_total'] * 100\n\nsummary['month'] = pd.Categorical(\n    summary['month'],\n    categories=[\n        'January', 'February', 'March', 'April', 'May', 'June',\n        'July', 'August', 'September', 'October', 'November', 'December'\n    ],\n    ordered=True\n)\n\n(\n  ggplot(summary, aes(x='month',y='delay_chance',color='airport_code'))\n  + geom_smooth(method='loess',se=False)\n  + labs(x='Month',\n         y='Delay Change (%)',\n         title='Counts of Delayed Flights for 7 Airports In U.S.',\n         subtitle='Number of delay flights catagorized by month across the years.',\n         caption='Source: BTS Website'\n  )\n  + ylim(0, None)\n  + theme(\n        axis_text_x=element_text(angle=45, hjust=1),\n        plot_title=element_text(size=14, face='bold')\n    )\n)",
-    "crumbs": [
-      "Data Exploration",
-      "Project 3"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/project1.html#question",
-    "href": "Machine_Learning/project1.html#question",
-    "title": "Client Report - Can You Predict That?",
-    "section": "QUESTION",
-    "text": "QUESTION\nBuild a classification model labeling houses as being built “before 1980” or “during or after 1980”. Your goal is to reach or exceed 90% accuracy. Report your final model choice and any other model parameters you may have tweaked (train-test split ratio, tuning parameters, etc).\nThe machine model is being trained and successful making the prediction if the house is build before 1980 with the precision of 93% as shown in the output below. When looking at the bar chart, we can see the importance of the features of the house make the critical decision for the model to predict the year that the house was built.\n\n\nShow the code\n# Include and execute your code here\ndf = df[df[\"yrbuilt\"].notna()]\ny = df[\"before1980\"]\n\nX = df.drop(columns=[\"before1980\", \"yrbuilt\"])\nX = X.select_dtypes(include=\"number\")\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.20, random_state=42, stratify=y\n)\n\nmy_classifier = RandomForestClassifier()\nmy_classifier.fit(X_train, y_train)\n\npred = my_classifier.predict(X_test)\n\nprint(classification_report(y_test, pred))\n\nmy_classifier.feature_importances_\nX_train.columns\n\ndf = pd.DataFrame({'importance':my_classifier.feature_importances_,\n'feature':X_train.columns}).sort_values('importance')\n\np = (\n    ggplot(data=df)\n    + geom_bar(aes(x='feature', y='importance'), stat='identity')   # swapped x/y\n    + coord_flip()  # keep horizontal look if you still want features on y visually\n    + labs(\n        x='Importance',\n        y='Features',\n        title='Factors that train the model',\n        subtitle='Prediction of whether the house was built\\nbefore 1980',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np\n\n\n              precision    recall  f1-score   support\n\n           0       0.90      0.91      0.90      1719\n           1       0.94      0.94      0.94      2864\n\n    accuracy                           0.93      4583\n   macro avg       0.92      0.92      0.92      4583\nweighted avg       0.93      0.93      0.93      4583\n\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\naccuracy = accuracy_score(y_test, pred)\nprecision = precision_score(y_test, pred, average='weighted')\nrecall = recall_score(y_test, pred, average='weighted')\nf1 = f1_score(y_test, pred, average='weighted')\ncm = confusion_matrix(y_test, pred)\n\nprint(f\"Accuracy: {accuracy:.2f}\")\nprint(f\"Precision: {precision:.2f}\")\nprint(f\"Recall: {recall:.2f}\")\nprint(f\"F1 Score: {f1:.2f}\")\nprint(\"Confusion Matrix:\")\nprint(cm)\n\n\nAccuracy: 0.93\nPrecision: 0.93\nRecall: 0.93\nF1 Score: 0.93\nConfusion Matrix:\n[[1556  163]\n [ 176 2688]]",
-    "crumbs": [
-      "Machine Learning",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/project2.html#question-1",
-    "href": "Machine_Learning/project2.html#question-1",
-    "title": "Client Report - How good is it, really?",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\nDescribe the quality of your classification model using 2-3 different evaluation metrics. You also need to explain how to interpret each of the evaluation metrics you use.\nI picked the K Neighbors and Random Forest model because I am familiar with them when I was doing the last assignment and attended the lecture. I also picking the Logistic Regression becauase I feel that machine learning is doing for linear regression. Based on the result below, the Random Forest Classification has the highest accuracy prediction compared to the true answer. The K Neighbors Classification is not working well as the neighboring data might not be helpful for predicting if the house was built before 1980. For the Logistic Regression, I am not too sure the machenism behind the model even after I have done some research on it. Thus, I am not capable to demonstrate my understanding on this.\n\n\nShow the code\n# Include and execute your code here\nX = df.drop(columns=[\"before1980\", \"yrbuilt\"])\nX = X.select_dtypes(include=\"number\")\ny = df[\"before1980\"]\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\nmodels = {\n    \"Logistic Regression\": LogisticRegression(max_iter=1000),\n    \"Random Forest\": RandomForestClassifier(random_state=42),\n    \"K Neighbors\": KNeighborsClassifier(n_neighbors=11),\n}\n\nfor name, model in models.items():\n    model.fit(X_train, y_train)\n    acc = model.score(X_test, y_test)\n    print(f'Model: {name}, Accuracy: {acc:.2f}')\n\n\nModel: Logistic Regression, Accuracy: 0.84\nModel: Random Forest, Accuracy: 0.93\nModel: K Neighbors, Accuracy: 0.70",
-    "crumbs": [
-      "Machine Learning",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/project2.html#question-2",
-    "href": "Machine_Learning/project2.html#question-2",
-    "title": "Client Report - How good is it, really?",
-    "section": "QUESTION 2",
-    "text": "QUESTION 2\nJustify your classification model by discussing the most important features selected by your model. This discussion should include a feature importance chart and a description of the features.\nI found out the cool feature that I can list out all of the feature that is used to determine of the house was built before 1980. Based on the plot below, it is easy to see that the most importance two factors that determine if the house was built before 1980 are live area and number of bathrooms that they have. Nevertheless, there are a lot more features that involved for making the model to perform a proper prediction to achieve the high accuracy.\n\n\nShow the code\n# Include and execute your code here\nbest = models[\"Random Forest\"]\n\nfeat_imp = pd.DataFrame({\n    'feature': X.columns,\n    'importance': best.feature_importances_\n}).sort_values('importance', ascending=False)\n\np = (\n    ggplot(data=feat_imp)\n    + geom_bar(aes(x='feature', y='importance'), stat='identity', fill='#5DADE2')\n    + coord_flip()\n    + labs(\n        x='Features',\n        y='Importance',\n        title='Factors that train the model',\n        subtitle='Prediction of whether the house was built\\nbefore 1980',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np",
-    "crumbs": [
-      "Machine Learning",
-      "Project 2"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/project3.html#question-1",
-    "href": "Machine_Learning/project3.html#question-1",
-    "title": "Client Report - Show me!",
-    "section": "QUESTION 1",
-    "text": "QUESTION 1\nCreate 2-3 charts that evaluate the relationships between each of the top 2 or 3 most important variables (as found in Unit 4 Task 2) and the year the home was built. Describe what you learn from the charts about how that variable is related to year built.\nI have performed the machine learning with the dataset with the model of RandomForest since it is the best model to predict for the dataset thus far. I have also presented the top 10 features that has the greatest correlation to the prediction. The live area has the direct correlation on when the house was built. It is actually make sense as there are not many remodel houses unless it is around the city town. Moreover, I have also plotted the mass plot comparing the features. Surprisingly, the feasures has nearly no correlation to each other when predicting the data since the majority of the data point appear to be aroudn the lowest score on the heatmap. Nevertheless, the number of baths has the correleration to the fact if the house come with a basement, which similar to the stories.\n\n\nShow the code\n# Include and execute your code here\nX = df.drop(columns=[\"before1980\", \"yrbuilt\"])\nX = X.select_dtypes(include=\"number\")\ny = df[\"before1980\"]\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\nmodel = RandomForestClassifier(random_state=42)\n\nmodel.fit(X_train, y_train)\npred = model.predict(X_test)\nacc = model.score(X_test, y_test)\nprint(f'Accuracy: {acc:.2f}')\nprint(classification_report(y_test, pred))\n\nmodel.feature_importances_\nX_train.columns\n\ndf1 = pd.DataFrame({'importance':model.feature_importances_,\n'feature':X_train.columns}).sort_values('importance',ascending=True).tail(10)\n\np = (\n    ggplot(data=df1)\n    + geom_bar(aes(x='feature', y='importance'), stat='identity')   # swapped x/y\n    + coord_flip()  # keep horizontal look if you still want features on y visually\n    + labs(\n        x='Importance',\n        y='Features',\n        title='Factors that train the model',\n        subtitle='Prediction of whether the house was built\\nbefore 1980',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np\n\n\nAccuracy: 0.93\n              precision    recall  f1-score   support\n\n           0       0.90      0.91      0.90      1719\n           1       0.94      0.94      0.94      2864\n\n    accuracy                           0.93      4583\n   macro avg       0.92      0.92      0.92      4583\nweighted avg       0.93      0.93      0.93      4583\n\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\ntop_feats = df1['feature'].tolist()\ncorr = df[top_feats].corr()\ncorr_df = (\n    corr.reset_index()\n        .melt(id_vars='index', var_name='feature2', value_name='corr')\n        .rename(columns={'index': 'feature1'})\n)\np_heatmap = (\n    ggplot(corr_df, aes('feature2', 'feature1', fill='corr'))\n    + geom_tile()\n    + geom_text(aes(label=corr_df['corr'].round(2)), size=10, color='white')\n    + scale_fill_gradient(low='#d6e9f9', high='#08306b')\n    + coord_fixed()  # make cells square\n    + ggsize(700, 500)\n    + labs(\n        title='Feature Correlation Heatmap (Top 10 Variables)',\n        subtitle='Shows how top features relate to each other',\n        x='',\n        y='',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np_heatmap",
-    "crumbs": [
-      "Machine Learning",
-      "Project 3"
-    ]
-  },
-  {
-    "objectID": "Machine_Learning/project3.html#question-2",
-    "href": "Machine_Learning/project3.html#question-2",
-    "title": "Client Report - Show me!",
-    "section": "QUESTION 2",
-    "text": "QUESTION 2\nCreate at least one other chart to examine a variable(s) you thought might be important but apparently was not. The chart should show its relationship to the year built. Describe what you learn from the chart about how that variable is related to year built. Explain why you think it was not (very) important in the model.\nWhen looking at the database, I was expecting that the year of the house sold has the greatest correlation for predicting the result as the custom to my country, majority of the house sold within the first two years windows or even before it is being built. However, when I was performing the analysis of how long the house built and being sold, to my surprised that there are houses that being sold after a few decades. We have the highest peak on the year that it was built and sold, then we have the second highest peak around 60 years. It is totally caught me out of guard.\n\n\nShow the code\n# Include and execute your code here\ndf['house_age_at_sale'] = df['syear'] - df['yrbuilt']\n\np1 = (\n    ggplot(df, aes('house_age_at_sale'))\n    + geom_histogram(bins=40, fill='#4c72b0', color='white', alpha=0.8)\n    + labs(\n        title='Distribution of House Age at Time of Sale',\n        subtitle='Most homes sold decades after being built',\n        x='House Age at Sale (years)',\n        y='Count',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np1",
-    "crumbs": [
-      "Machine Learning",
-      "Project 3"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/project1.html#executive-summary",
-    "href": "Cleansing_Projects/project1.html#executive-summary",
-    "title": "Client Report - The war with Star Wars",
-    "section": "Executive Summary",
-    "text": "Executive Summary\nThis project examines data from the FiveThirtyEight Star Wars survey to explore which movies respondents have watched, how they rank the episodes, and how they feel about major characters. After cleaning the dataset and recreating key visuals, I built a simple classification model to identify factors related to movie viewing. The results match the trends shown in the original article, with the original trilogy being the most watched and most preferred.",
+    "objectID": "Cleansing_Projects/project2.html",
+    "href": "Cleansing_Projects/project2.html",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv\", encoding_errors = \"ignore\", skiprows=1)",
     "crumbs": [
       "Data Cleansing",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/project1.html#methods",
-    "href": "Cleansing_Projects/project1.html#methods",
-    "title": "Client Report - The war with Star Wars",
-    "section": "Methods",
-    "text": "Methods\nI cleaned the dataset by renaming columns, fixing categorical values, and filtering to include only respondents who had seen at least one Star Wars movie. Missing values were handled by removing incomplete rows only when needed. I then created summary graphs to better understand viewing patterns and movie rankings. Finally, I encoded demographic and fan-related variables to build a simple classification model predicting who had seen the films.\n\n\nShow the code\n# Include and execute your code here\n\n## Shorten the column names and clean them up for easier use with pandas. Provide a table or list that exemplifies how you fixed the names.\nnew_col_names = [\n  \"respondant_id\", \"seen_any\", \"fan_starwars\",\n  #each movie\n  \"seen_epi1\", \"seen_epi2\", \"seen_epi3\", \"seen_epi4\", \"seen_epi5\", \"seen_epi6\",\n  #movie rank (1 = best, 6 = worst)\n  \"rank_epi1\", \"rank_epi2\", \"rank_epi3\", \"rank_epi4\",\"rank_epi5\", \"rank_epi6\",\n  #Character (very favorable to very unfavorable)\n  \"fav_han\", \"fav_luke\", \"fav_leia\", \"fav_anakin\", \"fav_obi\", \"fav_palantine\", \"fav_darth\", \"fav_lando\", \"fav_boba\", \"fav_c3po\", \"fav_r2\", \"fav_jar\", \"fav_padme\", \"fav_yoda\",\n  #Who shot first\n  \"who_shot_first\",\n  #Know about expanded universe\n  \"familiar_expanded_universe\",\n  #Fan of expanded universe\n  \"fan_expanded_universe\",\n  #Star Treck fan\n  \"fan_startrek\",\n  #Demogrpahic\n  \"gender\", \"age\", \"income\", \"educ\", \"location\"\n]\ndf.columns = new_col_names\n\n## Filter the dataset to 835 respondents that have seen at least one film (Hint: Don’t use the column Have you seen any of the 6 films in the Star Wars franchise?)\nseen_col = [\"seen_epi1\", \"seen_epi2\", \"seen_epi3\", \"seen_epi4\", \"seen_epi5\", \"seen_epi6\"]\ndf_seen = df[df[seen_col].notna().any(axis = 1)]\n# print(df_seen.shape)\n\ndf_seen = df[df[seen_col].any(axis=1)].copy()\n\n# df_seen",
-    "crumbs": [
-      "Data Cleansing",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/project1.html#results",
-    "href": "Cleansing_Projects/project1.html#results",
-    "title": "Client Report - The war with Star Wars",
-    "section": "Results",
-    "text": "Results\nThe graphs show that most respondents had seen the original trilogy, with A New Hope, The Empire Strikes Back, and Return of the Jedi receiving the highest viewing percentages. When looking only at people who watched all six films, The Empire Strikes Back was the most frequently ranked as the best movie. These patterns match common fan opinions and highlight the strong preference for the original trilogy. The data also revealed noticeable differences in character favorability and viewing habits across respondents. Overall, the descriptive results helped us understand the main trends in how people watch and rate the Star Wars series.\n\n\nShow the code\n# Include and execute your code here\nmovies = [\n    \"The Phantom Menace\",\n    \"Attack of the Clones\",\n    \"Revenge of the Sith\",\n    \"A New Hope\",\n    \"The Empire Strikes Back\",\n    \"Return of the Jedi\"\n]\n\n# Percent of df_seen who have seen each film\nseen_pct = (df_seen[seen_col].notna().mean() * 100)\n\ndf_seen_movies = pd.DataFrame({\n    \"movie\": movies,\n    \"pct\": seen_pct.values\n})\n\n# Round for labels like 80, 68, etc.\ndf_seen_movies[\"pct_label\"] = df_seen_movies[\"pct\"].round(0).astype(int)\n\ndf_seen_movies[\"movie\"] = pd.Categorical(\n    df_seen_movies[\"movie\"],\n    categories=movies,\n    ordered=True\n)\n\np_seen = (\n    ggplot(df_seen_movies, aes(x=\"pct\", y=\"movie\"))\n    + geom_bar(stat=\"identity\", fill=\"#1295D8\")\n    + geom_text(\n        aes(label=\"pct_label\"),\n        nudge_x=2,\n        size=9\n    )\n    + scale_x_continuous(limits=[0, 100], expand=[0, 0])\n    + scale_y_discrete(limits=movies,reverse=True)\n    + labs(\n        x='',\n        y='',\n        title=\"Which 'Star Wars' Movies Have You Seen?\",\n        subtitle='Of 835 respondents who havec seen any film',\n        caption='Source: SURVEYMONKEY AUDIENCE'\n    )\n    + theme_minimal()\n    + theme(\n        panel_grid_major_y=element_blank(),\n        panel_grid_minor=element_blank(),\n        axis_text_x=element_blank(),\n        axis_ticks=element_blank(),\n        plot_title=element_text(size=18, face=\"bold\"),\n        plot_subtitle=element_text(size=12),\n        axis_text_y=element_text(size=11, color=\"#555555\")\n    )\n)\n\np_seen\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\n# Include and execute your code here\nrank_cols = [\"rank_epi1\", \"rank_epi2\", \"rank_epi3\",\n             \"rank_epi4\", \"rank_epi5\", \"rank_epi6\"]\n\ndf_all6 = df[df[seen_col].notna().all(axis=1)].copy()\n# print(\"n who have seen all 6:\", len(df_all6))\n\nranks_num = df_all6[rank_cols].apply(pd.to_numeric, errors=\"coerce\")\n\npct_best = ((ranks_num == 1).mean() * 100)\n\nmovies_best = [\n    \"The Phantom Menace\",\n    \"Attack of the Clones\",\n    \"Revenge of the Sith\",\n    \"A New Hope\",\n    \"The Empire Strikes Back\",\n    \"Return of the Jedi\"\n]\n\ndf_best = pd.DataFrame({\n    \"movie\": movies_best,\n    \"pct\": pct_best.values\n})\ndf_best[\"pct_label\"] = df_best[\"pct\"].round(0).astype(int)\n\np_best = (\n    ggplot(df_best, aes(x=\"pct\", y=\"movie\"))\n    + geom_bar(stat=\"identity\", fill=\"#1295D8\")\n    + geom_text(\n        aes(label=\"pct_label\"),\n        nudge_x=1.5,\n        size=9\n    )\n    + scale_x_continuous(limits=[0, df_best[\"pct\"].max() + 10], expand=[0, 0])\n    + scale_y_discrete(limits=movies_best,reverse=True)\n    + labs(\n        x='',\n        y='',\n        title=\"Which 'Star Wars' Movies Have You Seen?\",\n        subtitle='Of 471 respondents who have seen all six films',\n        caption='Source: SURVEYMONKEY AUDIENCE'\n    )\n    + theme_minimal()\n    + theme(\n        panel_grid_major_y=element_blank(),\n        panel_grid_minor=element_blank(),\n        axis_text_x=element_blank(),\n        axis_ticks=element_blank(),\n        plot_title=element_text(size=18, face=\"bold\"),\n        plot_subtitle=element_text(size=12),\n        axis_text_y=element_text(size=11, color=\"#555555\")\n    )\n)\n\np_best",
-    "crumbs": [
-      "Data Cleansing",
-      "Project 1"
-    ]
-  },
-  {
-    "objectID": "Cleansing_Projects/project1.html#results-1",
-    "href": "Cleansing_Projects/project1.html#results-1",
-    "title": "Client Report - The war with Star Wars",
-    "section": "Results",
-    "text": "Results\nFrom the visual summaries, I see clear trends in how respondents engage with the Star Wars films. The original trilogy consistently shows the highest viewing percentages, and The Empire Strikes Back stands out as the most commonly ranked “best” movie among those who watched all six episodes. These results reflect strong preferences toward the earlier films and match expectations based on long-standing fan opinions. The descriptive patterns provide a straightforward picture of how respondents experience and evaluate the series.",
-    "crumbs": [
-      "Data Cleansing",
-      "Project 1"
+      "Project 2"
     ]
   },
   {
@@ -739,6 +285,160 @@
     ]
   },
   {
+    "objectID": "Cleansing_Exploration/project3.html",
+    "href": "Cleansing_Exploration/project3.html",
+    "title": "Client Report - If not now, when?",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pd.read_json(\"https://github.com/byuidatascience/data4missing/raw/master/data-raw/flights_missing/flights_missing.json\")\nShow the code\ndf2 = df.fillna(np.nan).replace({\n    -999: np.nan,\n    \"\": np.nan,\n    \"n/a\": np.nan,\n    \"1500+\": 1500\n})\n\ndf2['airport_name'] = df2.groupby('airport_code')['airport_name'].fillna(method='bfill')\n\ndf2['month'] = df2['month'].fillna(method='ffill')\ndf2['month'] = df2['month'].replace({'Febuary':'February'})\ndf2['year'] = df2['year'].fillna(method='ffill')\n\n# ChatGPT fixed the month issue here\ndf2['month_num'] = pd.to_numeric(df2['month'], errors='coerce')\n\nmonth_map = {\n    'jan':1, 'january':1, 'feb':2, 'february':2, 'mar':3, 'march':3,\n    'apr':4, 'april':4, 'may':5, 'jun':6, 'june':6, 'jul':7, 'july':7,\n    'aug':8, 'august':8, 'sep':9, 'sept':9, 'september':9,\n    'oct':10, 'october':10, 'nov':11, 'november':11, 'dec':12, 'december':12\n}\n# Checking if the table still exist error\nmask = df2['month_num'].isna()\nif mask.any():\n    df2.loc[mask, 'month_num'] = (\n        df2.loc[mask, 'month']\n           .astype(str).str.strip().str.lower()\n           .map(month_map)\n    )\n\ndf2['month_num'] = df2['month_num'].astype(float)\n\nfor col in ['num_of_delays_weather', 'num_of_delays_late_aircraft', 'num_of_delays_nas']:\n    df2[col] = pd.to_numeric(df2[col], errors='coerce')\n\ndf2['num_of_delays_late_aircraft'] = round(df2['num_of_delays_late_aircraft'].fillna(\n    df2['num_of_delays_late_aircraft'].mean()\n),1)\n\nweather_part = df2['num_of_delays_weather']\nlate_part = 0.30 * df2['num_of_delays_late_aircraft']\n\ndf2['nas_weather_fraction'] = np.where(\n    df2['month_num'].fillna(0).between(4, 8),\n    0.40,  # April–August\n    0.65   # other months\n)\n\nnas_part = df2['nas_weather_fraction'] * df2['num_of_delays_nas']\n\ndf2['num_of_delays_weather_total'] = (weather_part + late_part + nas_part).round(2)",
+    "crumbs": [
+      "Data Exploration",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Exploration/project3.html#question-1",
+    "href": "Cleansing_Exploration/project3.html#question-1",
+    "title": "Client Report - If not now, when?",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nWhat is the best month to fly if you want to avoid delays of any length? Describe the metric you chose and why you chose it to calculate your answer. Include one chart to help support your answer, with the x-axis ordered by month.\nThe plot below shows a consistent percentage for the flight delays. The peak time for the flight delay is during the summer. Nevertheless, when analyzing the graph, the lowest chance of having delay flights for all 7 airports will be on September across the year based on the data set. Thus, the best time to take flights will be around September or in the range of mid August till mid November each year.\n\n\nShow the code\n# Include and execute your code here\nsummary = (\n    df2.groupby(['airport_code','month'], as_index=False)\n       .agg(\n           airport_name=('airport_name', 'first'),\n           num_of_delays_total=('num_of_delays_total', 'sum'),\n           num_of_flights_total=('num_of_flights_total', 'sum'),\n           minutes_delayed_total=('minutes_delayed_total','sum')\n       )\n)\n\nsummary['delay_chance'] = summary['num_of_delays_total'] / summary['num_of_flights_total'] * 100\n\nsummary['month'] = pd.Categorical(\n    summary['month'],\n    categories=[\n        'January', 'February', 'March', 'April', 'May', 'June',\n        'July', 'August', 'September', 'October', 'November', 'December'\n    ],\n    ordered=True\n)\n\n(\n  ggplot(summary, aes(x='month',y='delay_chance',color='airport_code'))\n  + geom_smooth(method='loess',se=False)\n  + labs(x='Month',\n         y='Delay Change (%)',\n         title='Counts of Delayed Flights for 7 Airports In U.S.',\n         subtitle='Number of delay flights catagorized by month across the years.',\n         caption='Source: BTS Website'\n  )\n  + ylim(0, None)\n  + theme(\n        axis_text_x=element_text(angle=45, hjust=1),\n        plot_title=element_text(size=14, face='bold')\n    )\n)",
+    "crumbs": [
+      "Data Exploration",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Exploration/project1.html",
+    "href": "Cleansing_Exploration/project1.html",
+    "title": "Client Report - Missing Data and JSON",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\n\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pd.read_json(\"https://github.com/byuidatascience/data4missing/raw/master/data-raw/flights_missing/flights_missing.json\")",
+    "crumbs": [
+      "Data Exploration",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Exploration/project1.html#question-1",
+    "href": "Cleansing_Exploration/project1.html#question-1",
+    "title": "Client Report - Missing Data and JSON",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nFix all of the varied missing data types in the data to be consistent: use np.nan to represent missing value. In your report include one record example (one row) from your clean data, in the raw JSON format. Your example should display at least one missing value so that we can verify it was done correctly. (Note: JSON will convert NaN’s to “null”). Describe your process for finding values that needed to be changed, and how you changed them.\nFrom the clean data, I have replaced the value of -999 with np.nan as well as using the method of fillna for replacing any variable frol NaN or null to NaN, then replacing the empty cell and ‘n/a’ cell to np.nan. After that, I have replaced ‘1500+’ with 1500. I have fill in the airportname based on the airport code, filling in the month and year using the forward fill. Filling the number of delays aircraft for ALT using the minutes of delay aircraft multiply by 0.04 (the averaged correlation is about 0.04). Lastly, I filled in the minutes of delays nas with 50 (correlation is about 50 between the data set). A line of code is being present below to demonstrate that the missing data has been filled.\n\n\nShow the code\n# Include and execute your code here\ndf = df.fillna(np.nan).replace({-999: np.nan})\n\ndf = df.replace({\"\": np.nan})\n\ndf = df.replace({\"1500+\": 1500})\n\ndf = df.replace({\"n/a\": np.nan})\n\ndf['airport_name'] = (\n    df.groupby('airport_code')['airport_name'].fillna(method='bfill')\n)\n\ndf['month'] = (df['month']).fillna(method='ffill')\ndf['year'] = (df['year']).fillna(method='ffill')\n\ndf['num_of_delays_late_aircraft'] = round(df['num_of_delays_late_aircraft'].fillna(df['minutes_delayed_late_aircraft']*0.04))\n\ndelays = pd.to_numeric(\n    df['num_of_delays_carrier'].astype(str).str.replace(',', '').str.strip(),\n    errors='coerce'\n)\n\ndf['minutes_delayed_carrier'] = df['minutes_delayed_carrier'].fillna(delays*60)\n\ndf['minutes_delayed_nas'] = df['minutes_delayed_nas'].fillna(df['num_of_delays_nas']*50)\n\ndf.iloc[0:1,].to_json\n\n\n&lt;bound method NDFrame.to_json of   airport_code                                       airport_name    month  \\\n0          ATL  Atlanta, GA: Hartsfield-Jackson Atlanta Intern...  January   \n\n     year  num_of_flights_total num_of_delays_carrier  \\\n0  2005.0                 35048                  1500   \n\n   num_of_delays_late_aircraft  num_of_delays_nas  num_of_delays_security  \\\n0                       4177.0               4598                      10   \n\n   num_of_delays_weather  num_of_delays_total  minutes_delayed_carrier  \\\n0                    448                 8355                 116423.0   \n\n   minutes_delayed_late_aircraft  minutes_delayed_nas  \\\n0                         104415             207467.0   \n\n   minutes_delayed_security  minutes_delayed_weather  minutes_delayed_total  \n0                       297                    36931                 465533  &gt;",
+    "crumbs": [
+      "Data Exploration",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Exploration/project2.html",
+    "href": "Cleansing_Exploration/project2.html",
+    "title": "Client Report - Weather Delays",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pd.read_json(\"https://github.com/byuidatascience/data4missing/raw/master/data-raw/flights_missing/flights_missing.json\")\nShow the code\n# Include and execute your code here\ndf1 = df.fillna(np.nan).replace({-999: np.nan})\n\ndf1 = df1.replace({\"\": np.nan})\n\ndf1 = df1.replace({\"1500+\": 1500})\n\ndf1 = df1.replace({\"n/a\": np.nan})\n\ndf1['airport_name'] = (\n    df1.groupby('airport_code')['airport_name'].fillna(method='bfill')\n)\n\ndf1['month'] = (df1['month']).fillna(method='ffill')\ndf1['year'] = (df1['year']).fillna(method='ffill')\n\ndf1['num_of_delays_late_aircraft'] = round(df1['num_of_delays_late_aircraft'].fillna(df1['minutes_delayed_late_aircraft']*0.04))\n\ndelays = pd.to_numeric(\n    df1['num_of_delays_carrier'].astype(str).str.replace(',', '').str.strip(),\n    errors='coerce'\n)\n\ndf1['minutes_delayed_carrier'] = df1['minutes_delayed_carrier'].fillna(delays*60)\n\ndf1['minutes_delayed_nas'] = df1['minutes_delayed_nas'].fillna(df1['num_of_delays_nas']*50)",
+    "crumbs": [
+      "Data Exploration",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Exploration/project2.html#question-1",
+    "href": "Cleansing_Exploration/project2.html#question-1",
+    "title": "Client Report - Weather Delays",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\n\nWhich airport has the worst delays? Describe the metric you chose, and why you chose it to determine the “worst” airport. Your answer should include a summary table that lists (for each airport) the total number of flights, total number of delayed flights, proportion of delayed flights, and average delay time in hours.\n\nI have combine all the delay flight data across the years and month and calculated the proportional of delayed flights by taking ratio between the total number of delay flights and total number of flights. Then the average dleay time in hours is calculated for the airport. Thus, we only have 7 airports and their total statistic as shown below with sorted value on proportion of delayed flights and average delay time in hours. Based on the table below, it is easy to see that San Francisco has the highest rate of delay flights but with the shorter time of delay in hours. On the other hand, Chicago has the second hightest rate of flights delay with the longest wait time for the delayed flight. Thus, Chicago airport is the designated the “worse” airport.\n\n\nShow the code\n# Include and execute your code here\nsummary = (\n    df1.groupby(['airport_code'], as_index=False)\n      .agg(\n          airport_name=('airport_name', 'first'),\n          num_of_flights_total=('num_of_flights_total', 'sum'),\n          num_of_delays_total=('num_of_delays_total', 'sum'),\n          minutes_delayed_total_mean=('minutes_delayed_total', 'mean')\n      )\n)\n\nsummary['proportional_of_delayed_flights'] = np.where(\n    summary['num_of_flights_total'] &gt; 0,\n    (summary['num_of_delays_total'] / summary['num_of_flights_total']).round(2),\n    np.nan\n)\nsummary['average_delay_time'] = (summary['minutes_delayed_total_mean'] / 60).round(2)\n\noutput = (\n    summary[\n        ['airport_code','airport_name',\n         'num_of_flights_total','num_of_delays_total',\n         'proportional_of_delayed_flights','average_delay_time']\n    ]\n    .sort_values(['proportional_of_delayed_flights','average_delay_time'],\n                 ascending=[False, False])\n)\n\noutput\n\n\n\n\n\n\n\n\n\nairport_code\nairport_name\nnum_of_flights_total\nnum_of_delays_total\nproportional_of_delayed_flights\naverage_delay_time\n\n\n\n\n5\nSFO\nSan Francisco, CA: San Francisco International\n1630945\n425604\n0.26\n3352.33\n\n\n3\nORD\nChicago, IL: Chicago O'Hare International\n3597588\n830825\n0.23\n7115.67\n\n\n0\nATL\nAtlanta, GA: Hartsfield-Jackson Atlanta Intern...\n4430047\n902443\n0.20\n6816.15\n\n\n2\nIAD\nWashington, DC: Washington Dulles International\n851571\n168467\n0.20\n1298.42\n\n\n1\nDEN\nDenver, CO: Denver International\n2513974\n468519\n0.19\n3178.46\n\n\n4\nSAN\nSan Diego, CA: San Diego International\n917862\n175132\n0.19\n1044.98\n\n\n6\nSLC\nSalt Lake City, UT: Salt Lake City International\n1403384\n205160\n0.15\n1278.20",
+    "crumbs": [
+      "Data Exploration",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Exploration/project2.html#question-2",
+    "href": "Cleansing_Exploration/project2.html#question-2",
+    "title": "Client Report - Weather Delays",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nAccording to the BTS website, the “Weather” category only accounts for severe weather delays. Mild weather delays are not counted in the “Weather” category, but are actually included in both the “NAS” and “Late-Arriving Aircraft” categories. Your job is to create a new column that calculates the total number of flights delayed by weather (both severe and mild). You will need to replace all the missing values in the Late Aircraft variable with the mean. Show your work by printing the first 5 rows of data in a table. Use these three rules for your calculations:\na. 100% of delayed flights in the Weather category are due to weather  \na. 30% of all delayed flights in the Late-Arriving category are due to weather  \na. From April to August, 40% of delayed flights in the NAS category are due to weather. The rest of the months, the proportion rises to 65%  \nI have created a new column for the fligth delays due to weather whether if the weather is severe or mild. I have to create another column of numeric months to complete the calculation. ChatGPT assists on converting the column after reading documentation online.\n\n\nShow the code\n# Include and execute your code here\ndf2 = df.fillna(np.nan).replace({\n    -999: np.nan,\n    \"\": np.nan,\n    \"n/a\": np.nan,\n    \"1500+\": 1500\n})\n\ndf2['airport_name'] = df2.groupby('airport_code')['airport_name'].fillna(method='bfill')\n\ndf2['month'] = df2['month'].fillna(method='ffill')\ndf2['year'] = df2['year'].fillna(method='ffill')\n\n# ChatGPT fixed the month issue here\ndf2['month_num'] = pd.to_numeric(df2['month'], errors='coerce')\n\nmonth_map = {\n    'jan':1, 'january':1, 'feb':2, 'february':2, 'febuary':2, 'mar':3, 'march':3,\n    'apr':4, 'april':4, 'may':5, 'jun':6, 'june':6, 'jul':7, 'july':7,\n    'aug':8, 'august':8, 'sep':9, 'sept':9, 'september':9,\n    'oct':10, 'october':10, 'nov':11, 'november':11, 'dec':12, 'december':12\n}\n# Checking if the table still exist error\nmask = df2['month_num'].isna()\nif mask.any():\n    df2.loc[mask, 'month_num'] = (\n        df2.loc[mask, 'month']\n           .astype(str).str.strip().str.lower()\n           .map(month_map)\n    )\n\ndf2['month_num'] = df2['month_num'].astype(float)\n\nfor col in ['num_of_delays_weather', 'num_of_delays_late_aircraft', 'num_of_delays_nas']:\n    df2[col] = pd.to_numeric(df2[col], errors='coerce')\n\ndf2['num_of_delays_late_aircraft'] = round(df2['num_of_delays_late_aircraft'].fillna(\n    df2['num_of_delays_late_aircraft'].mean()\n),1)\n\nweather_part = df2['num_of_delays_weather']\nlate_part = 0.30 * df2['num_of_delays_late_aircraft']\n\ndf2['nas_weather_fraction'] = np.where(\n    df2['month_num'].fillna(0).between(4, 8),\n    0.40,  # April–August\n    0.65   # other months\n)\n\nnas_part = df2['nas_weather_fraction'] * df2['num_of_delays_nas']\n\ndf2['num_of_delays_weather_total'] = (weather_part + late_part + nas_part).round(2)\n\ndf2[['airport_code','airport_name','month','year',\n      'num_of_delays_weather', 'num_of_delays_late_aircraft',\n      'num_of_delays_nas', 'num_of_delays_weather_total']].head(5)\n\n\n\n\n\n\n\n\n\nairport_code\nairport_name\nmonth\nyear\nnum_of_delays_weather\nnum_of_delays_late_aircraft\nnum_of_delays_nas\nnum_of_delays_weather_total\n\n\n\n\n0\nATL\nAtlanta, GA: Hartsfield-Jackson Atlanta Intern...\nJanuary\n2005.0\n448\n1109.1\n4598\n3769.43\n\n\n1\nDEN\nDenver, CO: Denver International\nJanuary\n2005.0\n233\n928.0\n935\n1119.15\n\n\n2\nIAD\nWashington, DC: Washington Dulles International\nJanuary\n2005.0\n61\n1058.0\n895\n960.15\n\n\n3\nORD\nChicago, IL: Chicago O'Hare International\nJanuary\n2005.0\n306\n2255.0\n5415\n4502.25\n\n\n4\nSAN\nSan Diego, CA: San Diego International\nJanuary\n2005.0\n56\n680.0\n638\n674.70",
+    "crumbs": [
+      "Data Exploration",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Exploration/project2.html#question-3",
+    "href": "Cleansing_Exploration/project2.html#question-3",
+    "title": "Client Report - Weather Delays",
+    "section": "Question 3",
+    "text": "Question 3\nUsing the new weather variable calculated above, create a barplot showing the proportion of all flights that are delayed by weather at each airport. Describe what you learn from this graph.\nBased on the barplot below, it is easy to see that both Alanta and Chicago airports outnumbered for the weather delayed flights. It then followed by San Fransico and Denver. Lastly Salt Lake City, Washington D.C., and San Diego airports have the lowest weather flight delay across the years. From the analysis, a potential analysis for Alanta airport is due to the tornado happened frequently due to Alanta is located south close to the ocean. For Chicago airport, it could due to the storm and high speed turbulance coming from the north. Similar to both San Fransico and Denver, the delay could due to tornado or other severe weather that is not accounted in the response here. Meanwhile, both San Fransico and Denver airports are the transfer airport; thus, it is reasonable to have slightly higher rate of delay if there is a servere weather condition on other airports.\n\n\nShow the code\n# Include and execute your code here\nsummary = (\n    df2.groupby(['airport_code'], as_index=False)\n       .agg(\n           airport_name=('airport_name', 'first'),\n           num_of_flights_total=('num_of_flights_total', 'sum'),\n           num_of_delays_weather_total=('num_of_delays_weather_total', 'sum')\n       )\n)\n\nsummary = summary.sort_values('num_of_delays_weather_total', ascending=False)\n\n(\n    ggplot(summary, aes(x='airport_code', y='num_of_delays_weather_total'))\n    + geom_bar(stat='identity', color='black')\n    + labs(\n        x='Airport Code',\n        y='Total Weather-Related Delays',\n        title='Total Number of Flights Delayed by Weather',\n        subtitle='Combined All Years Data for Individual Airport',\n        caption = 'Source: BTS Website'\n    )\n    + theme(\n        axis_text_x=element_text(angle=45, hjust=1),\n        plot_title=element_text(size=14, face='bold')\n    )\n)",
+    "crumbs": [
+      "Data Exploration",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Projects/project1.html",
+    "href": "Cleansing_Projects/project1.html",
+    "title": "Client Report - The war with Star Wars",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv\",\nencoding_errors = 'ignore', skiprows = 1)",
+    "crumbs": [
+      "Data Cleansing",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Projects/project1.html#executive-summary",
+    "href": "Cleansing_Projects/project1.html#executive-summary",
+    "title": "Client Report - The war with Star Wars",
+    "section": "Executive Summary",
+    "text": "Executive Summary\nThis project examines data from the FiveThirtyEight Star Wars survey to explore which movies respondents have watched, how they rank the episodes, and how they feel about major characters. After cleaning the dataset and recreating key visuals, I built a simple classification model to identify factors related to movie viewing. The results match the trends shown in the original article, with the original trilogy being the most watched and most preferred.",
+    "crumbs": [
+      "Data Cleansing",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Projects/project1.html#methods",
+    "href": "Cleansing_Projects/project1.html#methods",
+    "title": "Client Report - The war with Star Wars",
+    "section": "Methods",
+    "text": "Methods\nI cleaned the dataset by renaming columns, fixing categorical values, and filtering to include only respondents who had seen at least one Star Wars movie. Missing values were handled by removing incomplete rows only when needed. I then created summary graphs to better understand viewing patterns and movie rankings. Finally, I encoded demographic and fan-related variables to build a simple classification model predicting who had seen the films.\n\n\nShow the code\n# Include and execute your code here\n\n## Shorten the column names and clean them up for easier use with pandas. Provide a table or list that exemplifies how you fixed the names.\nnew_col_names = [\n  \"respondant_id\", \"seen_any\", \"fan_starwars\",\n  #each movie\n  \"seen_epi1\", \"seen_epi2\", \"seen_epi3\", \"seen_epi4\", \"seen_epi5\", \"seen_epi6\",\n  #movie rank (1 = best, 6 = worst)\n  \"rank_epi1\", \"rank_epi2\", \"rank_epi3\", \"rank_epi4\",\"rank_epi5\", \"rank_epi6\",\n  #Character (very favorable to very unfavorable)\n  \"fav_han\", \"fav_luke\", \"fav_leia\", \"fav_anakin\", \"fav_obi\", \"fav_palantine\", \"fav_darth\", \"fav_lando\", \"fav_boba\", \"fav_c3po\", \"fav_r2\", \"fav_jar\", \"fav_padme\", \"fav_yoda\",\n  #Who shot first\n  \"who_shot_first\",\n  #Know about expanded universe\n  \"familiar_expanded_universe\",\n  #Fan of expanded universe\n  \"fan_expanded_universe\",\n  #Star Treck fan\n  \"fan_startrek\",\n  #Demogrpahic\n  \"gender\", \"age\", \"income\", \"educ\", \"location\"\n]\ndf.columns = new_col_names\n\n## Filter the dataset to 835 respondents that have seen at least one film (Hint: Don’t use the column Have you seen any of the 6 films in the Star Wars franchise?)\nseen_col = [\"seen_epi1\", \"seen_epi2\", \"seen_epi3\", \"seen_epi4\", \"seen_epi5\", \"seen_epi6\"]\ndf_seen = df[df[seen_col].notna().any(axis = 1)]\n# print(df_seen.shape)\n\ndf_seen = df[df[seen_col].any(axis=1)].copy()\n\n# df_seen",
+    "crumbs": [
+      "Data Cleansing",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Projects/project1.html#results",
+    "href": "Cleansing_Projects/project1.html#results",
+    "title": "Client Report - The war with Star Wars",
+    "section": "Results",
+    "text": "Results\nThe graphs show that most respondents had seen the original trilogy, with A New Hope, The Empire Strikes Back, and Return of the Jedi receiving the highest viewing percentages. When looking only at people who watched all six films, The Empire Strikes Back was the most frequently ranked as the best movie. These patterns match common fan opinions and highlight the strong preference for the original trilogy. The data also revealed noticeable differences in character favorability and viewing habits across respondents. Overall, the descriptive results helped us understand the main trends in how people watch and rate the Star Wars series.\n\n\nShow the code\n# Include and execute your code here\nmovies = [\n    \"The Phantom Menace\",\n    \"Attack of the Clones\",\n    \"Revenge of the Sith\",\n    \"A New Hope\",\n    \"The Empire Strikes Back\",\n    \"Return of the Jedi\"\n]\n\n# Percent of df_seen who have seen each film\nseen_pct = (df_seen[seen_col].notna().mean() * 100)\n\ndf_seen_movies = pd.DataFrame({\n    \"movie\": movies,\n    \"pct\": seen_pct.values\n})\n\n# Round for labels like 80, 68, etc.\ndf_seen_movies[\"pct_label\"] = df_seen_movies[\"pct\"].round(0).astype(int)\n\ndf_seen_movies[\"movie\"] = pd.Categorical(\n    df_seen_movies[\"movie\"],\n    categories=movies,\n    ordered=True\n)\n\np_seen = (\n    ggplot(df_seen_movies, aes(x=\"pct\", y=\"movie\"))\n    + geom_bar(stat=\"identity\", fill=\"#1295D8\")\n    + geom_text(\n        aes(label=\"pct_label\"),\n        nudge_x=2,\n        size=9\n    )\n    + scale_x_continuous(limits=[0, 100], expand=[0, 0])\n    + scale_y_discrete(limits=movies,reverse=True)\n    + labs(\n        x='',\n        y='',\n        title=\"Which 'Star Wars' Movies Have You Seen?\",\n        subtitle='Of 835 respondents who havec seen any film',\n        caption='Source: SURVEYMONKEY AUDIENCE'\n    )\n    + theme_minimal()\n    + theme(\n        panel_grid_major_y=element_blank(),\n        panel_grid_minor=element_blank(),\n        axis_text_x=element_blank(),\n        axis_ticks=element_blank(),\n        plot_title=element_text(size=18, face=\"bold\"),\n        plot_subtitle=element_text(size=12),\n        axis_text_y=element_text(size=11, color=\"#555555\")\n    )\n)\n\np_seen\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\n# Include and execute your code here\nrank_cols = [\"rank_epi1\", \"rank_epi2\", \"rank_epi3\",\n             \"rank_epi4\", \"rank_epi5\", \"rank_epi6\"]\n\ndf_all6 = df[df[seen_col].notna().all(axis=1)].copy()\n# print(\"n who have seen all 6:\", len(df_all6))\n\nranks_num = df_all6[rank_cols].apply(pd.to_numeric, errors=\"coerce\")\n\npct_best = ((ranks_num == 1).mean() * 100)\n\nmovies_best = [\n    \"The Phantom Menace\",\n    \"Attack of the Clones\",\n    \"Revenge of the Sith\",\n    \"A New Hope\",\n    \"The Empire Strikes Back\",\n    \"Return of the Jedi\"\n]\n\ndf_best = pd.DataFrame({\n    \"movie\": movies_best,\n    \"pct\": pct_best.values\n})\ndf_best[\"pct_label\"] = df_best[\"pct\"].round(0).astype(int)\n\np_best = (\n    ggplot(df_best, aes(x=\"pct\", y=\"movie\"))\n    + geom_bar(stat=\"identity\", fill=\"#1295D8\")\n    + geom_text(\n        aes(label=\"pct_label\"),\n        nudge_x=1.5,\n        size=9\n    )\n    + scale_x_continuous(limits=[0, df_best[\"pct\"].max() + 10], expand=[0, 0])\n    + scale_y_discrete(limits=movies_best,reverse=True)\n    + labs(\n        x='',\n        y='',\n        title=\"Which 'Star Wars' Movies Have You Seen?\",\n        subtitle='Of 471 respondents who have seen all six films',\n        caption='Source: SURVEYMONKEY AUDIENCE'\n    )\n    + theme_minimal()\n    + theme(\n        panel_grid_major_y=element_blank(),\n        panel_grid_minor=element_blank(),\n        axis_text_x=element_blank(),\n        axis_ticks=element_blank(),\n        plot_title=element_text(size=18, face=\"bold\"),\n        plot_subtitle=element_text(size=12),\n        axis_text_y=element_text(size=11, color=\"#555555\")\n    )\n)\n\np_best",
+    "crumbs": [
+      "Data Cleansing",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Projects/project1.html#results-1",
+    "href": "Cleansing_Projects/project1.html#results-1",
+    "title": "Client Report - The war with Star Wars",
+    "section": "Results",
+    "text": "Results\nFrom the visual summaries, I see clear trends in how respondents engage with the Star Wars films. The original trilogy consistently shows the highest viewing percentages, and The Empire Strikes Back stands out as the most commonly ranked “best” movie among those who watched all six episodes. These results reflect strong preferences toward the earlier films and match expectations based on long-standing fan opinions. The descriptive patterns provide a straightforward picture of how respondents experience and evaluate the series.",
+    "crumbs": [
+      "Data Cleansing",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Cleansing_Projects/project3.html",
+    "href": "Cleansing_Projects/project3.html",
+    "title": "Client Report - Star Wars for Dummies",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.metrics import accuracy_score\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://github.com/fivethirtyeight/data/raw/master/star-wars-survey/StarWars.csv\", encoding_errors = \"ignore\", skiprows=1)\n\ndf.head()\n\n\n\n\n\n\n\n\n\nUnnamed: 0\nResponse\nResponse.1\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nStar Wars: Episode IV A New Hope\nStar Wars: Episode V The Empire Strikes Back\nStar Wars: Episode VI Return of the Jedi\nStar Wars: Episode I The Phantom Menace.1\n...\nYoda\nResponse.2\nResponse.3\nResponse.4\nResponse.5\nResponse.6\nResponse.7\nResponse.8\nResponse.9\nResponse.10\n\n\n\n\n0\n3292879998\nYes\nYes\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nStar Wars: Episode IV A New Hope\nStar Wars: Episode V The Empire Strikes Back\nStar Wars: Episode VI Return of the Jedi\n3.0\n...\nVery favorably\nI don't understand this question\nYes\nNo\nNo\nMale\n18-29\nNaN\nHigh school degree\nSouth Atlantic\n\n\n1\n3292879538\nNo\nNaN\nNaN\nNaN\nNaN\nNaN\nNaN\nNaN\nNaN\n...\nNaN\nNaN\nNaN\nNaN\nYes\nMale\n18-29\n$0 - $24,999\nBachelor degree\nWest South Central\n\n\n2\n3292765271\nYes\nNo\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nNaN\nNaN\nNaN\n1.0\n...\nUnfamiliar (N/A)\nI don't understand this question\nNo\nNaN\nNo\nMale\n18-29\n$0 - $24,999\nHigh school degree\nWest North Central\n\n\n3\n3292763116\nYes\nYes\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nStar Wars: Episode IV A New Hope\nStar Wars: Episode V The Empire Strikes Back\nStar Wars: Episode VI Return of the Jedi\n5.0\n...\nVery favorably\nI don't understand this question\nNo\nNaN\nYes\nMale\n18-29\n$100,000 - $149,999\nSome college or Associate degree\nWest North Central\n\n\n4\n3292731220\nYes\nYes\nStar Wars: Episode I The Phantom Menace\nStar Wars: Episode II Attack of the Clones\nStar Wars: Episode III Revenge of the Sith\nStar Wars: Episode IV A New Hope\nStar Wars: Episode V The Empire Strikes Back\nStar Wars: Episode VI Return of the Jedi\n5.0\n...\nSomewhat favorably\nGreedo\nYes\nNo\nNo\nMale\n18-29\n$100,000 - $149,999\nSome college or Associate degree\nWest North Central\n\n\n\n\n5 rows × 38 columns",
+    "crumbs": [
+      "Data Cleansing",
+      "Project 3"
+    ]
+  },
+  {
     "objectID": "Cleansing_Projects/project3.html#executive-summary",
     "href": "Cleansing_Projects/project3.html#executive-summary",
     "title": "Client Report - Star Wars for Dummies",
@@ -783,14 +483,146 @@
     ]
   },
   {
-    "objectID": "story_telling.html#project-1",
-    "href": "story_telling.html#project-1",
+    "objectID": "Competition/project2.html",
+    "href": "Competition/project2.html",
+    "title": "Client Report - Longevity of Baseball Players",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nimport sqlite3\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\nsqlite_file = 'lahmansbaseballdb.sqlite'\n# this file must be in the same location as your .qmd or .py file\ncon = sqlite3.connect(sqlite_file)",
+    "crumbs": [
+      "Competitions",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Competition/project2.html#question-1",
+    "href": "Competition/project2.html#question-1",
+    "title": "Client Report - Longevity of Baseball Players",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nWrite an SQL query that pulls in the batting average table. Then, with Python Pandas code create a dataframe that contains playerID, yearID, and batting average for players with at least 10 at bat that year. Sort the dataframe from highest batting average to lowest, and then by playerid alphabetically. Show the top 5 results in your report.\nBased on the table below, the batting averages is around 60% for the top 5 players for that year. The player with the best batting average is about 64.3% in 1974 with 9 hits when the player is at bat.\n\n\nShow the code\n# Execute an SQL query to pull in the data\nq = \"\"\"SELECT *\n        FROM batting\n    \"\"\"\ndf_batting = pd.read_sql_query(q, con)\n\n\n\n\nShow the code\n# Now use pandas code to work with the 'df_batting' data frame and complete the task\n\ndf = df_batting[['playerID','yearID','AB','H']]\n\ndf['Batting Avg'] = round(\n    df.groupby(['playerID', 'yearID'])['H'].transform('sum') /\n    df.groupby(['playerID', 'yearID'])['AB'].transform('sum'),\n    3\n)\n\ndf = df.query(\"AB &gt;= 10\").sort_values(['Batting Avg','playerID'],ascending=[False,True]).head(5)\n\ndf = df.rename(columns={\n  'yearID': 'Year',\n  'AB': 'At Bats',\n  'H': 'Hits'\n})\n\ndf\n\n\n\n\n\n\n\n\n\nplayerID\nYear\nAt Bats\nHits\nBatting Avg\n\n\n\n\n52396\nnymanny01\n1974\n14\n9\n0.643\n\n\n97227\ncarsoma01\n2013\n11\n7\n0.636\n\n\n12096\naltizda01\n1910\n10\n6\n0.600\n\n\n33793\nsilvech01\n1948\n14\n8\n0.571\n\n\n23845\npuccige01\n1930\n16\n9\n0.562",
+    "crumbs": [
+      "Competitions",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Competition/project2.html#question-2",
+    "href": "Competition/project2.html#question-2",
+    "title": "Client Report - Longevity of Baseball Players",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nNow use Python Pandas to calculate the batting average for players over their entire careers (all years combined). Only include players with at least 100 at bats over their entire career, and print the top 5 results.\nBased on the table below, when calculating the life long career for batting averages, the percentage tend to drop to 35%. The player with the best batting average is about 36.6% with 4189 hits from 11436 at bat.\n\n\nShow the code\n# Include and execute your pandas code code here. (You already read in the batting table in Question 1)\n\ndf = (\n    df_batting\n      .groupby('playerID', as_index=False)\n      .agg(Year=('yearID','max'),AB=('AB','sum'), H=('H','sum'))\n)\n\ndf['Batting Avg'] = (df['H'] / df['AB']).round(3)\n\ndf = (\n    df.query(\"AB &gt;= 100\")\n      .sort_values(['Batting Avg','playerID'], ascending=[False, True])\n      .head(5)\n)\n\ndf = df.rename(columns={\n    'AB': 'At Bats',\n    'H': 'Hits'\n})\n\ndf\n\n\n\n\n\n\n\n\n\nplayerID\nYear\nAt Bats\nHits\nBatting Avg\n\n\n\n\n3287\ncobbty01\n1928\n11436\n4189\n0.366\n\n\n844\nbarnero01\n1881\n2391\n860\n0.360\n\n\n8213\nhornsro01\n1937\n8173\n2930\n0.358\n\n\n8576\njacksjo01\n1920\n4981\n1772\n0.356\n\n\n11935\nmeyerle01\n1884\n1443\n513\n0.356",
+    "crumbs": [
+      "Competitions",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Full_Stack/project1.html",
+    "href": "Full_Stack/project1.html",
+    "title": "Client Report - [Insert Project Title]",
+    "section": "",
+    "text": "Paste in a template\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "Machine_Learning/project1.html",
+    "href": "Machine_Learning/project1.html",
+    "title": "Client Report - Can You Predict That?",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.datasets import load_wine\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score, confusion_matrix, classification_report\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import classification_report\nfrom sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv\")",
+    "crumbs": [
+      "Machine Learning",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/project1.html#question",
+    "href": "Machine_Learning/project1.html#question",
+    "title": "Client Report - Can You Predict That?",
+    "section": "QUESTION",
+    "text": "QUESTION\nBuild a classification model labeling houses as being built “before 1980” or “during or after 1980”. Your goal is to reach or exceed 90% accuracy. Report your final model choice and any other model parameters you may have tweaked (train-test split ratio, tuning parameters, etc).\nThe machine model is being trained and successful making the prediction if the house is build before 1980 with the precision of 93% as shown in the output below. When looking at the bar chart, we can see the importance of the features of the house make the critical decision for the model to predict the year that the house was built.\n\n\nShow the code\n# Include and execute your code here\ndf = df[df[\"yrbuilt\"].notna()]\ny = df[\"before1980\"]\n\nX = df.drop(columns=[\"before1980\", \"yrbuilt\"])\nX = X.select_dtypes(include=\"number\")\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.20, random_state=42, stratify=y\n)\n\nmy_classifier = RandomForestClassifier()\nmy_classifier.fit(X_train, y_train)\n\npred = my_classifier.predict(X_test)\n\nprint(classification_report(y_test, pred))\n\nmy_classifier.feature_importances_\nX_train.columns\n\ndf = pd.DataFrame({'importance':my_classifier.feature_importances_,\n'feature':X_train.columns}).sort_values('importance')\n\np = (\n    ggplot(data=df)\n    + geom_bar(aes(x='feature', y='importance'), stat='identity')   # swapped x/y\n    + coord_flip()  # keep horizontal look if you still want features on y visually\n    + labs(\n        x='Importance',\n        y='Features',\n        title='Factors that train the model',\n        subtitle='Prediction of whether the house was built\\nbefore 1980',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np\n\n\n              precision    recall  f1-score   support\n\n           0       0.90      0.91      0.91      1719\n           1       0.94      0.94      0.94      2864\n\n    accuracy                           0.93      4583\n   macro avg       0.92      0.92      0.92      4583\nweighted avg       0.93      0.93      0.93      4583\n\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\naccuracy = accuracy_score(y_test, pred)\nprecision = precision_score(y_test, pred, average='weighted')\nrecall = recall_score(y_test, pred, average='weighted')\nf1 = f1_score(y_test, pred, average='weighted')\ncm = confusion_matrix(y_test, pred)\n\nprint(f\"Accuracy: {accuracy:.2f}\")\nprint(f\"Precision: {precision:.2f}\")\nprint(f\"Recall: {recall:.2f}\")\nprint(f\"F1 Score: {f1:.2f}\")\nprint(\"Confusion Matrix:\")\nprint(cm)\n\n\nAccuracy: 0.93\nPrecision: 0.93\nRecall: 0.93\nF1 Score: 0.93\nConfusion Matrix:\n[[1560  159]\n [ 168 2696]]",
+    "crumbs": [
+      "Machine Learning",
+      "Project 1"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/project3.html",
+    "href": "Machine_Learning/project3.html",
+    "title": "Client Report - Show me!",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd \nimport numpy as np\nfrom lets_plot import *\n# add the additional libraries you need to import for ML here\nfrom sklearn.datasets import load_wine\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score, confusion_matrix, classification_report\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.metrics import classification_report\nfrom sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# import your data here using pandas and the URL\ndf = pd.read_csv(\"https://raw.githubusercontent.com/byuidatascience/data4dwellings/master/data-raw/dwellings_ml/dwellings_ml.csv\")",
+    "crumbs": [
+      "Machine Learning",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/project3.html#question-1",
+    "href": "Machine_Learning/project3.html#question-1",
+    "title": "Client Report - Show me!",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\nCreate 2-3 charts that evaluate the relationships between each of the top 2 or 3 most important variables (as found in Unit 4 Task 2) and the year the home was built. Describe what you learn from the charts about how that variable is related to year built.\nI have performed the machine learning with the dataset with the model of RandomForest since it is the best model to predict for the dataset thus far. I have also presented the top 10 features that has the greatest correlation to the prediction. The live area has the direct correlation on when the house was built. It is actually make sense as there are not many remodel houses unless it is around the city town. Moreover, I have also plotted the mass plot comparing the features. Surprisingly, the feasures has nearly no correlation to each other when predicting the data since the majority of the data point appear to be aroudn the lowest score on the heatmap. Nevertheless, the number of baths has the correleration to the fact if the house come with a basement, which similar to the stories.\n\n\nShow the code\n# Include and execute your code here\nX = df.drop(columns=[\"before1980\", \"yrbuilt\"])\nX = X.select_dtypes(include=\"number\")\ny = df[\"before1980\"]\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42, stratify=y\n)\n\nmodel = RandomForestClassifier(random_state=42)\n\nmodel.fit(X_train, y_train)\npred = model.predict(X_test)\nacc = model.score(X_test, y_test)\nprint(f'Accuracy: {acc:.2f}')\nprint(classification_report(y_test, pred))\n\nmodel.feature_importances_\nX_train.columns\n\ndf1 = pd.DataFrame({'importance':model.feature_importances_,\n'feature':X_train.columns}).sort_values('importance',ascending=True).tail(10)\n\np = (\n    ggplot(data=df1)\n    + geom_bar(aes(x='feature', y='importance'), stat='identity')   # swapped x/y\n    + coord_flip()  # keep horizontal look if you still want features on y visually\n    + labs(\n        x='Importance',\n        y='Features',\n        title='Factors that train the model',\n        subtitle='Prediction of whether the house was built\\nbefore 1980',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np\n\n\nAccuracy: 0.93\n              precision    recall  f1-score   support\n\n           0       0.90      0.91      0.90      1719\n           1       0.94      0.94      0.94      2864\n\n    accuracy                           0.93      4583\n   macro avg       0.92      0.92      0.92      4583\nweighted avg       0.93      0.93      0.93      4583\n\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\n\n\nShow the code\ntop_feats = df1['feature'].tolist()\ncorr = df[top_feats].corr()\ncorr_df = (\n    corr.reset_index()\n        .melt(id_vars='index', var_name='feature2', value_name='corr')\n        .rename(columns={'index': 'feature1'})\n)\np_heatmap = (\n    ggplot(corr_df, aes('feature2', 'feature1', fill='corr'))\n    + geom_tile()\n    + geom_text(aes(label=corr_df['corr'].round(2)), size=10, color='white')\n    + scale_fill_gradient(low='#d6e9f9', high='#08306b')\n    + coord_fixed()  # make cells square\n    + ggsize(700, 500)\n    + labs(\n        title='Feature Correlation Heatmap (Top 10 Variables)',\n        subtitle='Shows how top features relate to each other',\n        x='',\n        y='',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np_heatmap",
+    "crumbs": [
+      "Machine Learning",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Machine_Learning/project3.html#question-2",
+    "href": "Machine_Learning/project3.html#question-2",
+    "title": "Client Report - Show me!",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nCreate at least one other chart to examine a variable(s) you thought might be important but apparently was not. The chart should show its relationship to the year built. Describe what you learn from the chart about how that variable is related to year built. Explain why you think it was not (very) important in the model.\nWhen looking at the database, I was expecting that the year of the house sold has the greatest correlation for predicting the result as the custom to my country, majority of the house sold within the first two years windows or even before it is being built. However, when I was performing the analysis of how long the house built and being sold, to my surprised that there are houses that being sold after a few decades. We have the highest peak on the year that it was built and sold, then we have the second highest peak around 60 years. It is totally caught me out of guard.\n\n\nShow the code\n# Include and execute your code here\ndf['house_age_at_sale'] = df['syear'] - df['yrbuilt']\n\np1 = (\n    ggplot(df, aes('house_age_at_sale'))\n    + geom_histogram(bins=40, fill='#4c72b0', color='white', alpha=0.8)\n    + labs(\n        title='Distribution of House Age at Time of Sale',\n        subtitle='Most homes sold decades after being built',\n        x='House Age at Sale (years)',\n        y='Count',\n        caption='Source: Denver Open Data Catalog'\n    )\n)\np1",
+    "crumbs": [
+      "Machine Learning",
+      "Project 3"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/project2.html",
+    "href": "Story_Telling/project2.html",
+    "title": "Client Report - What’s in a Name?",
+    "section": "",
+    "text": "Show the code\nimport pandas as pd\nimport numpy as np\nfrom lets_plot import *\n\nLetsPlot.setup_html(isolated_frame=True)\nShow the code\n# Learn morea about Code Cells: https://quarto.org/docs/reference/cells/cells-jupyter.html\n\n# Include and execute your code here\ndf = pd.read_csv(\"https://github.com/byuidatascience/data4names/raw/master/data-raw/names_year/names_year.csv\")",
+    "crumbs": [
+      "Story Telling",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/project2.html#question-1",
+    "href": "Story_Telling/project2.html#question-1",
+    "title": "Client Report - What’s in a Name?",
+    "section": "QUESTION 1",
+    "text": "QUESTION 1\n\nHow does your name at your birth year compare to its use historically? Your must provide a chart. The years labels on your charts should not include a comma.\nThe plot below depicts the result when ‘Kavin’ is being used in the U.S. across the years. Based on the trends, the name ‘Kavin’ is being used more frequently since 1990-1995, especially after 1995. Since 1995, the number of baby name ‘Kavin’ has increased at least three times the amount at 1995. Before 1995, the number of babies name ‘Kavin’ maintain around ten.\n\n\nShow the code\n# Q1\nimport textwrap\n\nname_year = df[[\"name\",\"year\",\"Total\"]].query(\"name == 'Kavin'\")\n\nmin_year = name_year[\"year\"].min()\nmax_year = name_year[\"year\"].max()\n\nbreaks = np.arange(min_year, max_year+1, 5, int)\n\n\ntext = textwrap.fill(\"The name 'Kavin' is being used increase since 1990-1995.\",28)\n\ntext1 = textwrap.fill(\"The name 'Kavin' tend to be named for 10 babies or less before 1990-1995.\",28)\n\n(\n  ggplot(name_year, aes(x=\"year\", y=\"Total\")) \n  +geom_point(size=4)\n  +geom_point(\n        data=name_year.loc[name_year[\"year\"] == 1995, :], shape=1, size=6, color=\"red\"\n    )\n  + geom_point(\n        data=name_year.loc[name_year[\"year\"] == 1995, :], color=\"red\",size=4\n    )\n  + geom_point(\n        data=name_year.loc[name_year[\"year\"] &lt; 1995], color=\"blue\",size=4\n    )\n  + geom_point(\n        data=name_year.loc[name_year[\"year\"] &gt; 1995], color=\"green\", size=4\n        )\n  + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])\n  + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n  + geom_smooth(method=\"loess\")\n  + labs(\n        x=\"Year\",\n        y=\"Number of Babies\",\n        title=\"Number of baby name 'Kavin' in the U.S. across the years\",\n        subtitle=\"The graph shows the trend of the name 'Kavin' being used before and after 1995.\",\n        caption=\"Source: world.data\",\n    )\n  + geom_label(x=1988, y=35, label=text, hjust=\"center\", color=\"red\")\n  + geom_segment(x=1990,y=18,xend=2010,yend=41, arrow=arrow(type=\"closed\"), color=\"red\")\n  + geom_label(x=1972,y=20,label=text1,hjust=\"center\",color=\"purple\")\n)",
+    "crumbs": [
+      "Story Telling",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "Story_Telling/project2.html#question-2",
+    "href": "Story_Telling/project2.html#question-2",
+    "title": "Client Report - What’s in a Name?",
+    "section": "QUESTION 2",
+    "text": "QUESTION 2\nIf you talked to someone named Brittany on the phone, what is your guess of his or her age? What ages would you not guess? Try to justify your answer with whatever statistics knowledge you have. You must provide a chart. The years labels on your charts should not include a comma.\nBased on the chart below, it is easy to see that the babies are being named Brittany is in 1990. this means that when talking to someone named Brittany is 35 years old. However, there is a threshold of 5 years above and 10 years below the peak age. Hence, the most likely age for Brittany can be range from 25 to 40 years old. When talking through the phoen, it is less likely getting a Brittany that is in the age outside the interval of 25 and 40 years old.\n\n\nShow the code\n# Q2\nname_year = df[[\"name\",\"year\",\"Total\"]].query(\"name == 'Brittany'\")\n\n(\n  ggplot(name_year, aes(x=\"year\", y=\"Total\")) \n  +geom_point(size=4)\n  + labs(\n        x=\"Year\",\n        y=\"Number of Babies\",\n        title=\"Number of baby name 'Brittany' in the U.S. across the years\",\n        caption=\"Source: world.data\",\n    )\n  + geom_segment(x=1990,y=33500,xend=1990,yend=-50, linetype=\"dashed\", color=\"red\")\n  + scale_x_continuous(breaks=breaks, labels=[str(y) for y in breaks])\n  + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n)\n\n\n\n   \n       \n       \n       \n   \n   \n          \n   \n   \n\n\n\nTo better understand the chart for analysis, I have also constructed a chart that specifically for age instead of year. Thus the data dicipts obvious result of the peak age for Brittany.\n\n\nShow the code\nname_year['age'] = (2025 - name_year['year'])\n\n(\n  ggplot(name_year, aes(x=\"age\", y=\"Total\")) \n  + geom_point(size=4)\n  + labs(\n        x=\"Age\",\n        y=\"Number of Babies\",\n        title=\"Number of baby name 'Brittany' in the U.S. across the different ages\",\n        caption=\"Source: world.data\",\n    )\n  + geom_segment(x=35,y=33500,xend=35,yend=-50, linetype=\"dashed\", color=\"red\")\n  + theme(axis_text_x=element_text(angle=0, hjust=0.5))\n  + scale_x_reverse()\n)",
+    "crumbs": [
+      "Story Telling",
+      "Project 2"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
     "title": "Kavin Siaw",
     "section": "",
-    "text": "Project 1",
-    "crumbs": [
-      "Story Telling"
-    ]
+    "text": "I am a Physics major with minors in Mathematics and Computer Programming, specializing in in astronomy, signal processing, and scientific research. I am also interest in data science to find meaningful insights from data and understand their trends.\nI enjoy transforming noisy, complex datasets into clear insights through visualization, modeling, and careful analysis.\n\n\nMy resume has recently been updated with my latest research, technical experience, and leadership roles. Feel free to explore it to learn more about my background and qualifications.\n\n\n\nThis portfolio highlights my projects in data cleansing, exploratory analysis, storytelling, and machine learning, built using Quarto, SQL, and Lets-Plot. Use the menu above to browse each section and view the full projects."
+  },
+  {
+    "objectID": "index.html#resume",
+    "href": "index.html#resume",
+    "title": "Kavin Siaw",
+    "section": "",
+    "text": "My resume has recently been updated with my latest research, technical experience, and leadership roles. Feel free to explore it to learn more about my background and qualifications."
   },
   {
     "objectID": "index.html#projects",
@@ -800,10 +632,45 @@
     "text": "This portfolio highlights my projects in data cleansing, exploratory analysis, storytelling, and machine learning, built using Quarto, SQL, and Lets-Plot. Use the menu above to browse each section and view the full projects."
   },
   {
-    "objectID": "index.html#resume",
-    "href": "index.html#resume",
-    "title": "Kavin Siaw",
+    "objectID": "resume.html",
+    "href": "resume.html",
+    "title": "Kavin Siaw’s CV",
     "section": "",
-    "text": "My resume has recently been updated with my latest research, technical experience, and leadership roles. Feel free to explore it to learn more about my background and qualifications."
+    "text": "Physicist, Astrophysicist.\n\nkavin.siaw@astrophysicist.net | My LinkedIn page\n\n\n\nStanding on the shoulders of giants\n\n\nLaws of motion, gravitation, minting coins, disliking Robert Hooke\n\n\n\nCooling, power series, optics, alchemy, planetary motions, apples.\n\n\n\n\nSeptember 2021 - Now Brigham Young University-Idaho, United States.\n\nBachelor of Science in Physics\n\nJanuary 2008 - December 2013 Shen Jai High School, Malaysia\n\nHigh School Deploma in Science\n\n\n\n\nSeptember 2021 - April 2025 Thomas E. Ricks Grant (BYU-I Grant), Rexburg, United States\n\n\n\n\n\n\n2023 Senior Thesis: The Variability Properties of Mrk 501\n2024 Photometric Distance of the RR Lyrae Star Su Draconis\n2025 ALMA Molecular Line Search of the M87 Nucleus\n\n\n\n\n\nSeptember 2025 - Now Physics Lab Coordinator, Brigham Young University-Idaho\n\nGuided 300 first- and second-year students in developing effective problem-solving strategies, strengthening understanding of key physics principles\nProvided targeted mentoring and instructional support for Principles of Physics I–III, reinforcing conceptual mastery and application skills\nOffered individualized feedback to enhance students’ analytical reasoning and academic performance\n\nApril 2024 - Now Planetarium Operator, Brigham Young University-Idaho\n\nCreated and delivered 50 educational planetarium shows for audiences of 30–40 visitors, simplifying complex astronomical concepts into engaging, accessible presentations\nUtilized strong communication and storytelling skills to enhance audience understanding and maintain a 95% positive feedback rate from post-show surveys\nSet up and troubleshot Digistar7 projection systems before each session, ensuring 100% uptime and consistently high-quality visual performance\n\nApril 2022 - Now Teaching Assistant, Brigham Young University-Idaho\n\nSet up and maintained laboratory equipment for Principles of Physics I–III, ensuring all apparatus functioned reliably for student experiments\nGuided students through experimental procedures and safety protocols, providing clear instructions and hands-on assistance\nEvaluated and graded lab reports and assignments, delivering detailed feedback to support learning and improvement\nResponded to student questions on lab methods and theoretical concepts, reinforcing understanding of core physics principles\n\nDecember 2021 - Now NASA Aeronet Team Lead, Brigham Young University-Idaho\n\nSupervised the alignment and operation of the AERONET robotic sun photometer, ensuring precise solar tracking and high-quality atmospheric data collection\nCoordinated the transfer of aerosol optical depth data to NASA’s Aerosol Robotic Network (AERONET) for global analysis\nLed an 8-member team in regularly monitoring sensor performance and verifying data accuracy\nDiagnosed and addressed maintenance issues, ensuring continuous, reliable system operation and minimal downtime\n\n\n\nLast updated: December 2025"
+  },
+  {
+    "objectID": "resume.html#currently",
+    "href": "resume.html#currently",
+    "title": "Kavin Siaw’s CV",
+    "section": "",
+    "text": "Standing on the shoulders of giants\n\n\nLaws of motion, gravitation, minting coins, disliking Robert Hooke\n\n\n\nCooling, power series, optics, alchemy, planetary motions, apples."
+  },
+  {
+    "objectID": "resume.html#education",
+    "href": "resume.html#education",
+    "title": "Kavin Siaw’s CV",
+    "section": "",
+    "text": "September 2021 - Now Brigham Young University-Idaho, United States.\n\nBachelor of Science in Physics\n\nJanuary 2008 - December 2013 Shen Jai High School, Malaysia\n\nHigh School Deploma in Science"
+  },
+  {
+    "objectID": "resume.html#awards",
+    "href": "resume.html#awards",
+    "title": "Kavin Siaw’s CV",
+    "section": "",
+    "text": "September 2021 - April 2025 Thomas E. Ricks Grant (BYU-I Grant), Rexburg, United States"
+  },
+  {
+    "objectID": "resume.html#publications",
+    "href": "resume.html#publications",
+    "title": "Kavin Siaw’s CV",
+    "section": "",
+    "text": "2023 Senior Thesis: The Variability Properties of Mrk 501\n2024 Photometric Distance of the RR Lyrae Star Su Draconis\n2025 ALMA Molecular Line Search of the M87 Nucleus"
+  },
+  {
+    "objectID": "resume.html#occupation",
+    "href": "resume.html#occupation",
+    "title": "Kavin Siaw’s CV",
+    "section": "",
+    "text": "September 2025 - Now Physics Lab Coordinator, Brigham Young University-Idaho\n\nGuided 300 first- and second-year students in developing effective problem-solving strategies, strengthening understanding of key physics principles\nProvided targeted mentoring and instructional support for Principles of Physics I–III, reinforcing conceptual mastery and application skills\nOffered individualized feedback to enhance students’ analytical reasoning and academic performance\n\nApril 2024 - Now Planetarium Operator, Brigham Young University-Idaho\n\nCreated and delivered 50 educational planetarium shows for audiences of 30–40 visitors, simplifying complex astronomical concepts into engaging, accessible presentations\nUtilized strong communication and storytelling skills to enhance audience understanding and maintain a 95% positive feedback rate from post-show surveys\nSet up and troubleshot Digistar7 projection systems before each session, ensuring 100% uptime and consistently high-quality visual performance\n\nApril 2022 - Now Teaching Assistant, Brigham Young University-Idaho\n\nSet up and maintained laboratory equipment for Principles of Physics I–III, ensuring all apparatus functioned reliably for student experiments\nGuided students through experimental procedures and safety protocols, providing clear instructions and hands-on assistance\nEvaluated and graded lab reports and assignments, delivering detailed feedback to support learning and improvement\nResponded to student questions on lab methods and theoretical concepts, reinforcing understanding of core physics principles\n\nDecember 2021 - Now NASA Aeronet Team Lead, Brigham Young University-Idaho\n\nSupervised the alignment and operation of the AERONET robotic sun photometer, ensuring precise solar tracking and high-quality atmospheric data collection\nCoordinated the transfer of aerosol optical depth data to NASA’s Aerosol Robotic Network (AERONET) for global analysis\nLed an 8-member team in regularly monitoring sensor performance and verifying data accuracy\nDiagnosed and addressed maintenance issues, ensuring continuous, reliable system operation and minimal downtime\n\n\n\nLast updated: December 2025"
   }
 ]
